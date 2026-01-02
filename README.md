@@ -1,142 +1,103 @@
 # VivaCripto Frontend
 
-Frontend React para o portal de notícias de criptomoedas VivaCripto.
+Frontend Next.js 14+ para o portal de notícias VivaCripto.
 
 ## 🚀 Stack Técnico
 
-- **Framework**: React 19
-- **Build**: Vite
-- **Styling**: Tailwind CSS 4
-- **Autenticação**: Google OAuth 2.0
-- **HTTP Client**: Axios
-- **Roteamento**: React Router v6
+- **Framework**: Next.js 14+ (App Router)
+- **Linguagem**: TypeScript
+- **Estilização**: TailwindCSS
+- **Renderização**: SSG + ISR (Static Site Generation + Incremental Static Regeneration)
 - **Hospedagem**: Vercel
-
-## 📋 Pré-requisitos
-
-- Node.js 18+
-- npm ou pnpm
-- Credenciais do Google OAuth
-
-## 🔧 Instalação
-
-```bash
-# Clonar repositório
-git clone https://github.com/viniciusmantegazine/vivacripto-frontend.git
-cd vivacripto-frontend
-
-# Instalar dependências
-npm install
-
-# Configurar variáveis de ambiente
-cp .env.example .env.local
-# Editar .env.local com suas credenciais
-```
-
-## 🔐 Configuração do Google OAuth
-
-1. Acesse [Google Cloud Console](https://console.cloud.google.com)
-2. Crie um novo projeto
-3. Ative a API "Google+ API"
-4. Crie credenciais OAuth 2.0:
-   - Tipo: Web application
-   - URIs autorizados:
-     - `http://localhost:5173` (desenvolvimento)
-     - `https://seu-dominio.com` (produção)
-
-5. Copie `Client ID` para `.env.local` como `VITE_GOOGLE_CLIENT_ID`
 
 ## 📁 Estrutura do Projeto
 
 ```
 src/
-├── components/      # Componentes reutilizáveis
-├── pages/          # Páginas da aplicação
-├── hooks/          # Custom hooks
-├── services/       # Serviços (API, etc)
-├── contexts/       # Contextos React
-├── types/          # Tipos TypeScript
-├── utils/          # Funções utilitárias
-├── styles/         # Estilos CSS
-├── App.tsx         # Componente raiz
-└── main.tsx        # Ponto de entrada
+├── app/
+│   ├── layout.tsx          # Layout principal
+│   ├── page.tsx            # Home page
+│   ├── posts/[slug]/       # Páginas de posts dinâmicas
+│   ├── sitemap.ts          # Sitemap dinâmico
+│   └── robots.ts           # Robots.txt
+├── components/
+│   ├── ui/                 # Componentes de UI
+│   ├── layout/             # Componentes de layout
+│   ├── posts/              # Componentes de posts
+│   └── shared/             # Componentes compartilhados
+├── services/
+│   └── api.ts              # Cliente da API
+├── styles/
+│   └── globals.css         # Estilos globais
+└── lib/                    # Utilitários
 ```
 
-## 🚀 Desenvolvimento
+## 🔧 Instalação
 
+### Requisitos
+
+- Node.js 18+
+- npm ou pnpm
+
+### Setup Local
+
+1. Clone o repositório:
 ```bash
-# Iniciar servidor de desenvolvimento
+git clone https://github.com/viniciusmantegazine/vivacripto-frontend.git
+cd vivacripto-frontend
+```
+
+2. Instale as dependências:
+```bash
+npm install
+# ou
+pnpm install
+```
+
+3. Configure as variáveis de ambiente:
+```bash
+cp .env.example .env.local
+# Edite o arquivo .env.local com a URL da API
+```
+
+4. Inicie o servidor de desenvolvimento:
+```bash
 npm run dev
-
-# Servidor rodará em http://localhost:5173
 ```
 
-## 🏗️ Build
+O site estará disponível em `http://localhost:3000`
+
+## 🏗️ Build e Deploy
+
+### Build Local
 
 ```bash
-# Build para produção
 npm run build
-
-# Visualizar build localmente
-npm run preview
+npm start
 ```
 
-## 📚 Arquitetura
+### Deploy na Vercel
 
-### Autenticação
+1. Conecte o repositório GitHub à Vercel
+2. Configure a variável de ambiente `NEXT_PUBLIC_API_URL`
+3. Deploy automático a cada push na branch `main`
 
-A autenticação é feita via Google OAuth 2.0:
+## 🎨 Otimizações de SEO
 
-1. Usuário clica em "Login com Google"
-2. Google SDK carrega o widget de login
-3. Usuário faz login e recebe um ID token
-4. Frontend envia o ID token para o backend
-5. Backend valida o token e retorna um JWT
-6. Frontend armazena o JWT em localStorage
-7. JWT é enviado em todas as requisições subsequentes
+- ✅ SSG para geração estática de páginas
+- ✅ ISR para atualização incremental
+- ✅ Sitemap dinâmico
+- ✅ Robots.txt
+- ✅ Meta tags otimizadas
+- ✅ Open Graph e Twitter Cards
+- ✅ Schema Markup (JSON-LD)
+- ✅ Canonical URLs
+- ✅ Otimização de imagens com Next.js Image
+- ✅ Core Web Vitals otimizados
 
-### Estado da Aplicação
+## 📝 Variáveis de Ambiente
 
-O estado de autenticação é gerenciado via Context API (`AuthContext`):
-
-- `user`: Dados do usuário autenticado
-- `isAuthenticated`: Boolean indicando se está autenticado
-- `loading`: Boolean indicando se está carregando
-- `login()`: Função para fazer login
-- `logout()`: Função para fazer logout
-
-### API Client
-
-O `apiClient` é um wrapper do Axios que:
-
-- Configura automaticamente o header `Authorization` com o JWT
-- Intercepta erros 401 e redireciona para login
-- Gerencia o token em localStorage
-
-## 🧪 Testes
-
-```bash
-# Rodar testes
-npm test
-
-# Modo watch
-npm run test:watch
-```
-
-## 📦 Deploy no Vercel
-
-1. Conectar repositório GitHub ao Vercel
-2. Configurar variáveis de ambiente:
-   - `VITE_API_URL`: URL do backend (ex: https://api.vivacripto.com)
-   - `VITE_GOOGLE_CLIENT_ID`: Client ID do Google
-3. Vercel fará deploy automático a cada push
-
-## 🔒 Segurança
-
-- Tokens JWT são armazenados em localStorage (considerar httpOnly cookies em produção)
-- CORS é configurado no backend para aceitar apenas o frontend
-- Variáveis sensíveis em `.env.local` (nunca commitar)
-- Validação de entrada em formulários
+- `NEXT_PUBLIC_API_URL`: URL da API backend
 
 ## 🤝 Contribuindo
 
@@ -148,7 +109,3 @@ npm run test:watch
 ## 📄 Licença
 
 MIT
-
-## 📞 Suporte
-
-Para suporte, abra uma issue no repositório GitHub.
