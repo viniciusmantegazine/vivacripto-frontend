@@ -46,35 +46,55 @@ export async function getPosts(params: {
 }): Promise<PostListResponse> {
   const { page = 1, pageSize = 10, status = 'published' } = params
   
-  const url = new URL(`${API_URL}/posts`)
-  url.searchParams.append('page', page.toString())
-  url.searchParams.append('page_size', pageSize.toString())
-  if (status) {
-    url.searchParams.append('status', status)
+  try {
+    const url = new URL(`${API_URL}/posts`)
+    url.searchParams.append('page', page.toString())
+    url.searchParams.append('page_size', pageSize.toString())
+    if (status) {
+      url.searchParams.append('status', status)
+    }
+
+    const res = await fetch(url.toString(), {
+      next: { revalidate: 60 }, // Cache for 60 seconds
+    })
+
+    if (!res.ok) {
+      console.warn('Failed to fetch posts, returning empty list')
+      return {
+        items: [],
+        total: 0,
+        page: 1,
+        page_size: pageSize,
+        total_pages: 0,
+      }
+    }
+
+    return res.json()
+  } catch (error) {
+    console.warn('Error fetching posts:', error)
+    return {
+      items: [],
+      total: 0,
+      page: 1,
+      page_size: pageSize,
+      total_pages: 0,
+    }
   }
-
-  const res = await fetch(url.toString(), {
-    next: { revalidate: 60 }, // Cache for 60 seconds
-  })
-
-  if (!res.ok) {
-    throw new Error('Failed to fetch posts')
-  }
-
-  return res.json()
 }
 
 export async function getPostBySlug(slug: string): Promise<Post | null> {
-  const res = await fetch(`${API_URL}/posts/slug/${slug}`, {
-    next: { revalidate: 60 },
-  })
+  try {
+    const res = await fetch(`${API_URL}/posts/slug/${slug}`, {
+      next: { revalidate: 60 },
+    })
 
-  if (!res.ok) {
-    if (res.status === 404) {
+    if (!res.ok) {
       return null
     }
-    throw new Error('Failed to fetch post')
-  }
 
-  return res.json()
+    return res.json()
+  } catch (error) {
+    console.warn('Error fetching post:', error)
+    return null
+  }
 }

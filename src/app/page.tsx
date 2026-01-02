@@ -18,11 +18,19 @@ export default async function Home() {
           </p>
         </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {posts.map((post) => (
-            <PostCard key={post.id} post={post} />
-          ))}
-        </div>
+        {posts.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-gray-600 text-lg">
+              Nenhuma notícia disponível no momento. Em breve teremos conteúdo sobre criptomoedas!
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {posts.map((post) => (
+              <PostCard key={post.id} post={post} />
+            ))}
+          </div>
+        )}
       </div>
     </main>
   )
