@@ -1,111 +1,80 @@
-import axios, { AxiosInstance } from "axios";
-import { ApiResponse, User } from "@/types";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
-const API_TIMEOUT = parseInt(import.meta.env.VITE_API_TIMEOUT || "30000");
-
-class ApiClient {
-  private client: AxiosInstance;
-  private token: string | null = null;
-
-  constructor() {
-    this.client = axios.create({
-      baseURL: API_URL,
-      timeout: API_TIMEOUT,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    // Restore token from localStorage if exists
-    this.token = localStorage.getItem("authToken");
-    if (this.token) {
-      this.setAuthHeader();
-    }
-
-    // Add response interceptor
-    this.client.interceptors.response.use(
-      (response) => response,
-      (error) => {
-        if (error.response?.status === 401) {
-          // Token expired or invalid
-          this.clearAuth();
-          window.location.href = "/login";
-        }
-        return Promise.reject(error);
-      }
-    );
-  }
-
-  private setAuthHeader() {
-    if (this.token) {
-      this.client.defaults.headers.common["Authorization"] =
-        `Bearer ${this.token}`;
-    }
-  }
-
-  private clearAuth() {
-    this.token = null;
-    localStorage.removeItem("authToken");
-    delete this.client.defaults.headers.common["Authorization"];
-  }
-
-  setToken(token: string) {
-    this.token = token;
-    localStorage.setItem("authToken", token);
-    this.setAuthHeader();
-  }
-
-  getToken(): string | null {
-    return this.token;
-  }
-
-  // Auth endpoints
-  async getGoogleAuthUrl(): Promise<ApiResponse<{ url: string }>> {
-    const response = await this.client.get("/api/auth/google");
-    return response.data;
-  }
-
-  async googleCallback(idToken: string): Promise<
-    ApiResponse<{
-      token: string;
-      user: User;
-    }>
-  > {
-    const response = await this.client.post("/api/auth/google/callback", {
-      idToken,
-    });
-    return response.data;
-  }
-
-  async verifyToken(token: string): Promise<
-    ApiResponse<{
-      valid: boolean;
-      user?: User;
-    }>
-  > {
-    const response = await this.client.post("/api/auth/verify-token", {
-      token,
-    });
-    return response.data;
-  }
-
-  async getCurrentUser(): Promise<ApiResponse<{ user: User }>> {
-    const response = await this.client.get("/api/auth/me");
-    return response.data;
-  }
-
-  async logout(): Promise<ApiResponse> {
-    this.clearAuth();
-    const response = await this.client.post("/api/auth/logout");
-    return response.data;
-  }
-
-  // Health check
-  async healthCheck(): Promise<ApiResponse> {
-    const response = await this.client.get("/health");
-    return response.data;
-  }
+export interface Post {
+  id: string
+  title: string
+  slug: string
+  content_markdown: string
+  content_html: string
+  excerpt: string
+  featured_image_url: string | null
+  status: string
+  published_at: string | null
+  created_at: string
+  updated_at: string
+  meta_title: string | null
+  meta_description: string | null
+  canonical_url: string | null
+  author: {
+    id: string
+    name: string
+  } | null
+  category: {
+    id: string
+    name: string
+    slug: string
+  } | null
+  tags: Array<{
+    id: string
+    name: string
+    slug: string
+  }>
 }
 
-export const apiClient = new ApiClient();
+export interface PostListResponse {
+  items: Post[]
+  total: number
+  page: number
+  page_size: number
+  total_pages: number
+}
+
+export async function getPosts(params: {
+  page?: number
+  pageSize?: number
+  status?: string
+}): Promise<PostListResponse> {
+  const { page = 1, pageSize = 10, status = 'published' } = params
+  
+  const url = new URL(`${API_URL}/posts`)
+  url.searchParams.append('page', page.toString())
+  url.searchParams.append('page_size', pageSize.toString())
+  if (status) {
+    url.searchParams.append('status', status)
+  }
+
+  const res = await fetch(url.toString(), {
+    next: { revalidate: 60 }, // Cache for 60 seconds
+  })
+
+  if (!res.ok) {
+    throw new Error('Failed to fetch posts')
+  }
+
+  return res.json()
+}
+
+export async function getPostBySlug(slug: string): Promise<Post | null> {
+  const res = await fetch(`${API_URL}/posts/slug/${slug}`, {
+    next: { revalidate: 60 },
+  })
+
+  if (!res.ok) {
+    if (res.status === 404) {
+      return null
+    }
+    throw new Error('Failed to fetch post')
+  }
+
+  return res.json()
+}
