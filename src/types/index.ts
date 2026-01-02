@@ -3,6 +3,7 @@ export interface User {
   email: string;
   name: string;
   picture?: string;
+  role?: "user" | "admin";
 }
 
 export interface AuthContextType {
@@ -26,15 +27,19 @@ export interface NewsArticle {
   title: string;
   slug: string;
   content: string;
-  excerpt: string;
+  excerpt?: string;
   imageUrl?: string;
-  category: string;
-  tags: string[];
-  author: string;
+  categoryId: string;
+  authorId: string;
   isAIGenerated: boolean;
-  publishedAt?: string;
-  createdAt: string;
+  isPublished: boolean;
+  publishedAt?: Date;
+  views: number;
+  createdAt: Date;
+  updatedAt: Date;
 }
+
+export interface Article extends NewsArticle {}
 
 export interface Category {
   id: string;
@@ -42,6 +47,10 @@ export interface Category {
   slug: string;
   description?: string;
   color?: string;
+  icon?: string;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface Newsletter {
