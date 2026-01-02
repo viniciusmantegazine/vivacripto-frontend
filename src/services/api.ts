@@ -66,14 +66,14 @@ class ApiClient {
     return response.data;
   }
 
-  async googleCallback(code: string): Promise<
+  async googleCallback(idToken: string): Promise<
     ApiResponse<{
       token: string;
       user: User;
     }>
   > {
     const response = await this.client.post("/api/auth/google/callback", {
-      code,
+      idToken,
     });
     return response.data;
   }
