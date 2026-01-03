@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { Search, Menu, X } from 'lucide-react'
+import ThemeToggle from '@/components/ui/ThemeToggle'
 
 const categories = [
   { name: 'Bitcoin', slug: 'bitcoin' },
@@ -10,6 +11,7 @@ const categories = [
   { name: 'Altcoins', slug: 'altcoins' },
   { name: 'DeFi', slug: 'defi' },
   { name: 'Regulação', slug: 'regulacao' },
+  { name: 'Airdrop', slug: 'airdrop' },
 ]
 
 export default function Header() {
@@ -37,7 +39,7 @@ export default function Header() {
           </Link>
 
           {/* Desktop Search */}
-          <form onSubmit={handleSearch} className="hidden md:flex items-center flex-1 max-w-md mx-8">
+          <form onSubmit={handleSearch} className="hidden md:flex items-center flex-1 max-w-md mx-6">
             <div className="relative w-full">
               <input
                 type="text"
@@ -50,14 +52,22 @@ export default function Header() {
             </div>
           </form>
 
+          {/* Theme Toggle */}
+          <div className="hidden md:block">
+            <ThemeToggle />
+          </div>
+
           {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden p-2 text-gray-600 hover:text-gray-900"
-            aria-label="Toggle menu"
-          >
-            {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
+          <div className="flex items-center gap-2 md:hidden">
+            <ThemeToggle />
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+              aria-label="Toggle menu"
+            >
+              {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
         </div>
 
         {/* Desktop Navigation */}
