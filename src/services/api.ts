@@ -47,6 +47,7 @@ export async function getPosts(params: {
   const { page = 1, pageSize = 10, status = 'published' } = params
   
   try {
+    console.log('[API] API_URL:', API_URL)
     const url = new URL(`${API_URL}/posts`)
     url.searchParams.append('page', page.toString())
     url.searchParams.append('page_size', pageSize.toString())
@@ -54,12 +55,14 @@ export async function getPosts(params: {
       url.searchParams.append('status', status)
     }
 
+    console.log('[API] Fetching posts from:', url.toString())
     const res = await fetch(url.toString(), {
       next: { revalidate: 60 }, // Cache for 60 seconds
     })
 
+    console.log('[API] Response status:', res.status)
     if (!res.ok) {
-      console.warn('Failed to fetch posts, returning empty list')
+      console.warn('[API] Failed to fetch posts, returning empty list')
       return {
         items: [],
         total: 0,
@@ -69,9 +72,11 @@ export async function getPosts(params: {
       }
     }
 
-    return res.json()
+    const data = await res.json()
+    console.log('[API] Posts fetched:', data.total, 'total,', data.items.length, 'items')
+    return data
   } catch (error) {
-    console.warn('Error fetching posts:', error)
+    console.error('[API] Error fetching posts:', error)
     return {
       items: [],
       total: 0,

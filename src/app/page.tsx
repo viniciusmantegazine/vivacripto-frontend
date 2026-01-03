@@ -4,7 +4,9 @@ import PostCard from '@/components/posts/PostCard'
 export const revalidate = 60 // Revalidate every 60 seconds
 
 export default async function Home() {
+  console.log('[HOME] Fetching posts...')
   const { items: posts } = await getPosts({ page: 1, pageSize: 10, status: 'published' })
+  console.log('[HOME] Posts received:', posts.length)
 
   return (
     <main className="min-h-screen bg-gray-50">
