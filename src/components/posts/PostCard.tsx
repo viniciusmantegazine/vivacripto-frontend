@@ -1,44 +1,75 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { format } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
+import { Clock, Calendar } from 'lucide-react'
 import { Post } from '@/services/api'
 
-export default function PostCard({ post }: { post: Post }) {
+interface PostCardProps {
+  post: Post
+}
+
+function calculateReadingTime(content: string): number {
+  const wordsPerMinute = 200
+  const wordCount = content.split(/\s+/).length
+  return Math.ceil(wordCount / wordsPerMinute)
+}
+
+function formatDate(dateString: string): string {
+  const date = new Date(dateString)
+  return date.toLocaleDateString('pt-BR', {
+    day: '2-digit',
+    month: 'short',
+  })
+}
+
+export default function PostCard({ post }: PostCardProps) {
+  const readingTime = calculateReadingTime(post.content_markdown)
+
   return (
-    <Link href={`/posts/${post.slug}`} className="block group">
-      <article className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow">
-        {post.featured_image_url && (
-          <div className="relative w-full h-48">
+    <Link href={`/posts/${post.slug}`} className="group block h-full">
+      <article className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 h-full flex flex-col">
+        {/* Image */}
+        <div className="relative w-full h-48 overflow-hidden">
+          {post.featured_image_url ? (
             <Image
               src={post.featured_image_url}
               alt={post.title}
               fill
-              className="object-cover group-hover:scale-105 transition-transform duration-300"
+              className="object-cover group-hover:scale-105 transition-transform duration-500"
             />
-          </div>
-        )}
+          ) : (
+            <div className="w-full h-full bg-gradient-to-br from-orange-400 to-yellow-500" />
+          )}
+          
+          {/* Category Badge */}
+          {post.category && (
+            <span className="absolute top-3 left-3 px-3 py-1 bg-orange-500 text-white text-xs font-semibold rounded-full">
+              {post.category.name}
+            </span>
+          )}
+        </div>
         
-        <div className="p-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
+        {/* Content */}
+        <div className="p-5 flex-1 flex flex-col">
+          <h2 className="text-lg font-bold text-gray-900 mb-3 group-hover:text-orange-600 transition-colors line-clamp-2">
             {post.title}
           </h2>
           
-          <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+          <p className="text-gray-600 text-sm mb-4 line-clamp-3 flex-1">
             {post.excerpt}
           </p>
           
-          <div className="flex items-center justify-between text-xs text-gray-500">
-            {post.published_at && (
-              <time dateTime={post.published_at}>
-                {format(new Date(post.published_at), "d 'de' MMM", { locale: ptBR })}
+          {/* Meta Info */}
+          <div className="flex items-center gap-4 text-xs text-gray-500 pt-4 border-t border-gray-100">
+            <div className="flex items-center gap-1">
+              <Calendar className="w-3.5 h-3.5" />
+              <time dateTime={post.published_at || post.created_at}>
+                {formatDate(post.published_at || post.created_at)}
               </time>
-            )}
-            {post.category && (
-              <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded">
-                {post.category.name}
-              </span>
-            )}
+            </div>
+            <div className="flex items-center gap-1">
+              <Clock className="w-3.5 h-3.5" />
+              <span>{readingTime} min</span>
+            </div>
           </div>
         </div>
       </article>
