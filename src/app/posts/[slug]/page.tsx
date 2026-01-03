@@ -158,48 +158,7 @@ export default async function PostPage({ params }: { params: { slug: string } })
             </header>
 
             {/* Content */}
-            <div className="prose prose-lg max-w-none mb-12">
-              <style jsx global>{`
-                .prose {
-                  font-size: 1.125rem;
-                  line-height: 1.6;
-                  color: #374151;
-                }
-                .prose h2 {
-                  font-size: 1.875rem;
-                  font-weight: 700;
-                  margin-top: 2rem;
-                  margin-bottom: 1rem;
-                  color: #111827;
-                }
-                .prose h3 {
-                  font-size: 1.5rem;
-                  font-weight: 600;
-                  margin-top: 1.5rem;
-                  margin-bottom: 0.75rem;
-                  color: #111827;
-                }
-                .prose p {
-                  margin-bottom: 1.5rem;
-                }
-                .prose strong {
-                  color: #111827;
-                  font-weight: 600;
-                }
-                .prose a {
-                  color: #f97316;
-                  text-decoration: none;
-                }
-                .prose a:hover {
-                  text-decoration: underline;
-                }
-                .prose ul, .prose ol {
-                  margin-bottom: 1.5rem;
-                }
-                .prose li {
-                  margin-bottom: 0.5rem;
-                }
-              `}</style>
+            <div className="prose prose-lg prose-gray max-w-none mb-12 prose-headings:text-gray-900 prose-h2:text-3xl prose-h2:font-bold prose-h2:mt-8 prose-h2:mb-4 prose-h3:text-2xl prose-h3:font-semibold prose-h3:mt-6 prose-h3:mb-3 prose-p:mb-6 prose-p:leading-relaxed prose-a:text-orange-600 prose-a:no-underline hover:prose-a:underline prose-strong:text-gray-900 prose-strong:font-semibold prose-ul:mb-6 prose-ol:mb-6 prose-li:mb-2">
               <ReactMarkdown>{post.content_markdown}</ReactMarkdown>
             </div>
 
