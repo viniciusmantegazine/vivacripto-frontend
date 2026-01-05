@@ -9,6 +9,9 @@ import Breadcrumbs from '@/components/ui/Breadcrumbs'
 import RelatedPosts from '@/components/posts/RelatedPosts'
 import ShareButtons from '@/components/ui/ShareButtons'
 
+// Allow dynamic params for posts created after build
+export const dynamicParams = true
+
 export async function generateStaticParams() {
   const { items: posts } = await getPosts({ page: 1, pageSize: 100, status: 'published' })
   return posts.map((post) => ({
