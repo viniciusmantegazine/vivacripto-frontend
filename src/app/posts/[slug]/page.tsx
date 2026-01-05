@@ -104,13 +104,13 @@ export default async function PostPage({ params }: { params: { slug: string } })
     <>
       <Header />
       
-      <main className="min-h-screen bg-gray-50">
+      <main className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         
-        <article className="bg-white">
+        <article className="bg-white dark:bg-gray-800">
           <div className="container mx-auto px-4 py-8 max-w-4xl">
             {/* Breadcrumbs */}
             <Breadcrumbs items={breadcrumbItems} />
@@ -125,12 +125,12 @@ export default async function PostPage({ params }: { params: { slug: string } })
               )}
 
               {/* Title */}
-              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
                 {post.title}
               </h1>
               
               {/* Meta Info */}
-              <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 mb-6 pb-6 border-b border-gray-200">
+              <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-300 mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
                 <div className="flex items-center gap-2">
                   <Calendar className="w-4 h-4" />
                   <time dateTime={post.published_at || post.created_at}>
@@ -161,14 +161,14 @@ export default async function PostPage({ params }: { params: { slug: string } })
             </header>
 
             {/* Content */}
-            <div className="prose prose-lg prose-gray max-w-none mb-12 prose-headings:text-gray-900 prose-h2:text-3xl prose-h2:font-bold prose-h2:mt-8 prose-h2:mb-4 prose-h3:text-2xl prose-h3:font-semibold prose-h3:mt-6 prose-h3:mb-3 prose-p:mb-6 prose-p:leading-relaxed prose-a:text-orange-600 prose-a:no-underline hover:prose-a:underline prose-strong:text-gray-900 prose-strong:font-semibold prose-ul:mb-6 prose-ol:mb-6 prose-li:mb-2">
+            <div className="prose prose-lg prose-gray dark:prose-invert max-w-none mb-12 prose-headings:text-gray-900 dark:prose-headings:text-white prose-h2:text-3xl prose-h2:font-bold prose-h2:mt-8 prose-h2:mb-4 prose-h3:text-2xl prose-h3:font-semibold prose-h3:mt-6 prose-h3:mb-3 prose-p:mb-6 prose-p:leading-relaxed prose-a:text-orange-600 dark:prose-a:text-orange-400 prose-a:no-underline hover:prose-a:underline prose-strong:text-gray-900 dark:prose-strong:text-white prose-strong:font-semibold prose-ul:mb-6 prose-ol:mb-6 prose-li:mb-2">
               <ReactMarkdown>{post.content_markdown}</ReactMarkdown>
             </div>
 
             {/* Disclaimer */}
-            <footer className="mt-12 pt-6 border-t border-gray-200 bg-gray-50 rounded-lg p-6">
-              <p className="text-sm text-gray-600 leading-relaxed">
-                <strong className="text-gray-900">Aviso:</strong> VivaCripto utiliza inteligência artificial para gerar parte de seu conteúdo. 
+            <footer className="mt-12 pt-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 rounded-lg p-6">
+              <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
+                <strong className="text-gray-900 dark:text-white">Aviso:</strong> VivaCripto utiliza inteligência artificial para gerar parte de seu conteúdo. 
                 Nossos artigos são criados a partir de fontes de notícias confiáveis e revisados 
                 por um processo automatizado de qualidade. Este conteúdo é puramente informativo 
                 e não constitui recomendação de investimento.

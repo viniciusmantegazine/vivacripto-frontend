@@ -26,7 +26,7 @@ export default function Header() {
   }
 
   return (
-    <header className="bg-white shadow-md sticky top-0 z-50">
+    <header className="bg-white dark:bg-gray-800 shadow-md sticky top-0 z-50">
       <div className="container mx-auto px-4">
         {/* Top Bar */}
         <div className="flex items-center justify-between py-4">
@@ -35,7 +35,7 @@ export default function Header() {
             <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-yellow-500 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-xl">VC</span>
             </div>
-            <span className="text-2xl font-bold text-gray-900">VivaCripto</span>
+            <span className="text-2xl font-bold text-gray-900 dark:text-white">VivaCripto</span>
           </Link>
 
           {/* Desktop Search */}
@@ -46,7 +46,7 @@ export default function Header() {
                 placeholder="Buscar notícias..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="w-full px-4 py-2 pl-10 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
               />
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             </div>
@@ -71,15 +71,15 @@ export default function Header() {
         </div>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-8 pb-4 border-t border-gray-100 pt-4">
-          <Link href="/" className="text-gray-700 hover:text-orange-600 font-medium transition-colors">
+        <nav className="hidden md:flex items-center space-x-8 pb-4 border-t border-gray-100 dark:border-gray-700 pt-4">
+          <Link href="/" className="text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 font-medium transition-colors">
             Início
           </Link>
           {categories.map((category) => (
             <Link
               key={category.slug}
               href={`/categoria/${category.slug}`}
-              className="text-gray-700 hover:text-orange-600 font-medium transition-colors"
+              className="text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 font-medium transition-colors"
             >
               {category.name}
             </Link>
@@ -88,7 +88,7 @@ export default function Header() {
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-gray-100">
+          <div className="md:hidden py-4 border-t border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800">
             {/* Mobile Search */}
             <form onSubmit={handleSearch} className="mb-4">
               <div className="relative">
@@ -97,7 +97,7 @@ export default function Header() {
                   placeholder="Buscar notícias..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  className="w-full px-4 py-2 pl-10 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                 />
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               </div>
@@ -108,7 +108,7 @@ export default function Header() {
               <Link
                 href="/"
                 onClick={() => setIsMenuOpen(false)}
-                className="text-gray-700 hover:text-orange-600 font-medium transition-colors py-2"
+                className="text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 font-medium transition-colors py-2"
               >
                 Início
               </Link>
@@ -117,7 +117,7 @@ export default function Header() {
                   key={category.slug}
                   href={`/categoria/${category.slug}`}
                   onClick={() => setIsMenuOpen(false)}
-                  className="text-gray-700 hover:text-orange-600 font-medium transition-colors py-2"
+                  className="text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 font-medium transition-colors py-2"
                 >
                   {category.name}
                 </Link>
