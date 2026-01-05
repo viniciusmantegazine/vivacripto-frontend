@@ -1,4 +1,5 @@
 import { getPostBySlug, getPosts } from '@/services/api'
+import { cleanMetaDescription, removeDuplicateTitle, stripMarkdown, calculateReadingTime, formatDate } from '@/lib/utils'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import ReactMarkdown from 'react-markdown'
@@ -26,15 +27,18 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     return {}
   }
 
+  const cleanTitle = stripMarkdown(post.title)
+  const cleanDescription = cleanMetaDescription(post.meta_description || post.excerpt)
+  
   return {
-    title: post.meta_title || post.title,
-    description: post.meta_description || post.excerpt,
+    title: post.meta_title || cleanTitle,
+    description: cleanDescription,
     alternates: {
       canonical: post.canonical_url || `https://vivacripto.com.br/posts/${post.slug}`,
     },
     openGraph: {
-      title: post.title,
-      description: post.excerpt,
+      title: cleanTitle,
+      description: cleanDescription,
       url: `https://vivacripto.com.br/posts/${post.slug}`,
       siteName: 'VivaCripto',
       images: [{ url: post.featured_image_url || '', width: 1200, height: 630 }],
@@ -45,20 +49,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 }
 
-function calculateReadingTime(content: string): number {
-  const wordsPerMinute = 200
-  const wordCount = content.split(/\s+/).length
-  return Math.ceil(wordCount / wordsPerMinute)
-}
 
-function formatDate(dateString: string): string {
-  const date = new Date(dateString)
-  return date.toLocaleDateString('pt-BR', {
-    day: '2-digit',
-    month: 'long',
-    year: 'numeric',
-  })
-}
 
 export default async function PostPage({ params }: { params: { slug: string } }) {
   const post = await getPostBySlug(params.slug)
@@ -71,7 +62,9 @@ export default async function PostPage({ params }: { params: { slug: string } })
   const { items: allPosts } = await getPosts({ page: 1, pageSize: 10, status: 'published' })
   const relatedPosts = allPosts.filter((p) => p.id !== post.id)
 
-  const readingTime = calculateReadingTime(post.content_markdown)
+  // Remove duplicate title from content
+  const cleanContent = removeDuplicateTitle(post.content_markdown, post.title)
+  const readingTime = calculateReadingTime(cleanContent)
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -95,9 +88,11 @@ export default async function PostPage({ params }: { params: { slug: string } })
     description: post.excerpt,
   }
 
+  const cleanTitle = stripMarkdown(post.title)
+  
   const breadcrumbItems = [
     ...(post.category ? [{ label: post.category.name, href: `/categoria/${post.category.slug}` }] : []),
-    { label: post.title },
+    { label: cleanTitle },
   ]
 
   return (
@@ -126,7 +121,7 @@ export default async function PostPage({ params }: { params: { slug: string } })
 
               {/* Title */}
               <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
-                {post.title}
+                {cleanTitle}
               </h1>
               
               {/* Meta Info */}
@@ -161,8 +156,8 @@ export default async function PostPage({ params }: { params: { slug: string } })
             </header>
 
             {/* Content */}
-            <div className="prose prose-lg prose-gray dark:prose-invert max-w-none mb-12 prose-headings:text-gray-900 dark:prose-headings:text-white prose-h2:text-3xl prose-h2:font-bold prose-h2:mt-8 prose-h2:mb-4 prose-h3:text-2xl prose-h3:font-semibold prose-h3:mt-6 prose-h3:mb-3 prose-p:mb-6 prose-p:leading-relaxed prose-a:text-orange-600 dark:prose-a:text-orange-400 prose-a:no-underline hover:prose-a:underline prose-strong:text-gray-900 dark:prose-strong:text-white prose-strong:font-semibold prose-ul:mb-6 prose-ol:mb-6 prose-li:mb-2">
-              <ReactMarkdown>{post.content_markdown}</ReactMarkdown>
+            <div className="prose prose-lg prose-gray dark:prose-invert max-w-none mb-12 prose-headings:text-gray-900 dark:prose-headings:text-white prose-h2:text-3xl prose-h2:font-bold prose-h2:mt-10 prose-h2:mb-6 prose-h3:text-2xl prose-h3:font-semibold prose-h3:mt-8 prose-h3:mb-4 prose-p:mb-8 prose-p:leading-[1.8] prose-a:text-orange-600 dark:prose-a:text-orange-400 prose-a:no-underline hover:prose-a:underline prose-strong:text-gray-900 dark:prose-strong:text-white prose-strong:font-semibold prose-ul:mb-8 prose-ul:space-y-3 prose-ol:mb-8 prose-ol:space-y-3 prose-li:mb-2">
+              <ReactMarkdown>{cleanContent}</ReactMarkdown>
             </div>
 
             {/* Disclaimer */}
