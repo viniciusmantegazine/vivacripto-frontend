@@ -1,18 +1,15 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { TrendingUp, TrendingDown } from 'lucide-react'
+import { TrendingUp, TrendingDown, ChevronDown, ChevronUp } from 'lucide-react'
 
 interface CryptoData {
   id: string
   name: string
   symbol: string
   current_price: number
-  price_change_percentage_1h_in_currency: number
   price_change_percentage_24h_in_currency: number
-  total_volume: number
   market_cap: number
-  fully_diluted_valuation: number
   image: string
 }
 
@@ -20,6 +17,7 @@ export default function Top5Crypto() {
   const [cryptos, setCryptos] = useState<CryptoData[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
+  const [expanded, setExpanded] = useState(false)
 
   useEffect(() => {
     fetchTop5Cryptos()
@@ -31,7 +29,7 @@ export default function Top5Crypto() {
   async function fetchTop5Cryptos() {
     try {
       const response = await fetch(
-        'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=5&page=1&sparkline=false&price_change_percentage=1h,24h'
+        'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=5&page=1&sparkline=false&price_change_percentage=24h'
       )
       
       if (!response.ok) {
@@ -81,15 +79,22 @@ export default function Top5Crypto() {
     return 'text-red-600 dark:text-red-400'
   }
 
+  function getPercentageBgColor(percentage: number): string {
+    if (percentage >= 0) {
+      return 'bg-green-50 dark:bg-green-900/20'
+    }
+    return 'bg-red-50 dark:bg-red-900/20'
+  }
+
   if (loading) {
     return (
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-8">
-        <div className="animate-pulse">
-          <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-48 mb-4"></div>
-          <div className="space-y-3">
-            {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-16 bg-gray-200 dark:bg-gray-700 rounded"></div>
-            ))}
+      <div className="bg-gradient-to-r from-orange-500 to-yellow-500 text-white py-3 mb-6">
+        <div className="container mx-auto px-4">
+          <div className="animate-pulse flex items-center gap-6">
+            <div className="h-4 bg-white/30 rounded w-32"></div>
+            <div className="h-4 bg-white/30 rounded w-24"></div>
+            <div className="h-4 bg-white/30 rounded w-24"></div>
+            <div className="h-4 bg-white/30 rounded w-24"></div>
           </div>
         </div>
       </div>
@@ -101,185 +106,160 @@ export default function Top5Crypto() {
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-8">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Top 5 Criptomoedas por FDV
-        </h2>
-        <span className="text-sm text-gray-500 dark:text-gray-400">
-          Atualizado agora
-        </span>
-      </div>
+    <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 mb-6">
+      <div className="container mx-auto px-4">
+        {/* Ticker Compacto - Sempre Visível */}
+        <div className="py-3">
+          <div className="flex items-center justify-between gap-4">
+            {/* Label */}
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <span className="text-sm font-semibold text-gray-700 dark:text-gray-300 hidden sm:inline">
+                Mercado
+              </span>
+            </div>
 
-      {/* Desktop Table */}
-      <div className="hidden lg:block overflow-x-auto">
-        <table className="w-full">
-          <thead>
-            <tr className="border-b border-gray-200 dark:border-gray-700">
-              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-600 dark:text-gray-400">
-                #
-              </th>
-              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-600 dark:text-gray-400">
-                Coin
-              </th>
-              <th className="text-right py-3 px-4 text-sm font-semibold text-gray-600 dark:text-gray-400">
-                Price
-              </th>
-              <th className="text-right py-3 px-4 text-sm font-semibold text-gray-600 dark:text-gray-400">
-                1h %
-              </th>
-              <th className="text-right py-3 px-4 text-sm font-semibold text-gray-600 dark:text-gray-400">
-                24h %
-              </th>
-              <th className="text-right py-3 px-4 text-sm font-semibold text-gray-600 dark:text-gray-400">
-                Volume 24h
-              </th>
-              <th className="text-right py-3 px-4 text-sm font-semibold text-gray-600 dark:text-gray-400">
-                Market Cap
-              </th>
-              <th className="text-right py-3 px-4 text-sm font-semibold text-gray-600 dark:text-gray-400">
-                FDV
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {cryptos.map((crypto, index) => (
-              <tr
-                key={crypto.id}
-                className="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
-              >
-                <td className="py-4 px-4 text-gray-600 dark:text-gray-400 font-medium">
-                  {index + 1}
-                </td>
-                <td className="py-4 px-4">
-                  <div className="flex items-center gap-3">
+            {/* Cryptos Horizontais */}
+            <div className="flex-1 overflow-x-auto scrollbar-hide">
+              <div className="flex items-center gap-4 md:gap-6">
+                {cryptos.map((crypto) => (
+                  <div
+                    key={crypto.id}
+                    className="flex items-center gap-2 flex-shrink-0"
+                  >
                     <img
                       src={crypto.image}
                       alt={crypto.name}
-                      className="w-8 h-8 rounded-full"
+                      className="w-5 h-5 rounded-full"
                     />
-                    <div>
-                      <div className="font-semibold text-gray-900 dark:text-white">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-sm font-semibold text-gray-900 dark:text-white">
+                        {crypto.symbol.toUpperCase()}
+                      </span>
+                      <span className="text-sm text-gray-600 dark:text-gray-400">
+                        {formatPrice(crypto.current_price)}
+                      </span>
+                      <span
+                        className={`text-xs font-medium ${getPercentageColor(
+                          crypto.price_change_percentage_24h_in_currency || 0
+                        )}`}
+                      >
+                        {formatPercentage(
+                          crypto.price_change_percentage_24h_in_currency || 0
+                        )}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Botão Expandir */}
+            <button
+              onClick={() => setExpanded(!expanded)}
+              className="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-400 hover:text-orange-600 dark:hover:text-orange-400 transition-colors flex-shrink-0"
+            >
+              <span className="hidden sm:inline">
+                {expanded ? 'Menos' : 'Mais'}
+              </span>
+              {expanded ? (
+                <ChevronUp className="w-4 h-4" />
+              ) : (
+                <ChevronDown className="w-4 h-4" />
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Detalhes Expandidos - Opcional */}
+        {expanded && (
+          <div className="border-t border-gray-200 dark:border-gray-700 py-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+              {cryptos.map((crypto, index) => (
+                <div
+                  key={crypto.id}
+                  className="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-4 hover:shadow-md transition-shadow"
+                >
+                  <div className="flex items-center gap-3 mb-3">
+                    <img
+                      src={crypto.image}
+                      alt={crypto.name}
+                      className="w-10 h-10 rounded-full"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <div className="font-semibold text-gray-900 dark:text-white truncate">
                         {crypto.name}
                       </div>
-                      <div className="text-sm text-gray-500 dark:text-gray-400 uppercase">
+                      <div className="text-xs text-gray-500 dark:text-gray-400 uppercase">
                         {crypto.symbol}
                       </div>
                     </div>
+                    <div className="text-xs font-medium text-gray-500 dark:text-gray-400">
+                      #{index + 1}
+                    </div>
                   </div>
-                </td>
-                <td className="py-4 px-4 text-right font-semibold text-gray-900 dark:text-white">
-                  {formatPrice(crypto.current_price)}
-                </td>
-                <td className={`py-4 px-4 text-right font-medium ${getPercentageColor(crypto.price_change_percentage_1h_in_currency || 0)}`}>
-                  <div className="flex items-center justify-end gap-1">
-                    {(crypto.price_change_percentage_1h_in_currency || 0) >= 0 ? (
-                      <TrendingUp className="w-4 h-4" />
-                    ) : (
-                      <TrendingDown className="w-4 h-4" />
-                    )}
-                    {formatPercentage(crypto.price_change_percentage_1h_in_currency || 0)}
-                  </div>
-                </td>
-                <td className={`py-4 px-4 text-right font-medium ${getPercentageColor(crypto.price_change_percentage_24h_in_currency || 0)}`}>
-                  <div className="flex items-center justify-end gap-1">
-                    {(crypto.price_change_percentage_24h_in_currency || 0) >= 0 ? (
-                      <TrendingUp className="w-4 h-4" />
-                    ) : (
-                      <TrendingDown className="w-4 h-4" />
-                    )}
-                    {formatPercentage(crypto.price_change_percentage_24h_in_currency || 0)}
-                  </div>
-                </td>
-                <td className="py-4 px-4 text-right text-gray-700 dark:text-gray-300">
-                  {formatLargeNumber(crypto.total_volume)}
-                </td>
-                <td className="py-4 px-4 text-right text-gray-700 dark:text-gray-300">
-                  {formatLargeNumber(crypto.market_cap)}
-                </td>
-                <td className="py-4 px-4 text-right font-semibold text-gray-900 dark:text-white">
-                  {crypto.fully_diluted_valuation
-                    ? formatLargeNumber(crypto.fully_diluted_valuation)
-                    : 'N/A'}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
 
-      {/* Mobile Cards */}
-      <div className="lg:hidden space-y-4">
-        {cryptos.map((crypto, index) => (
-          <div
-            key={crypto.id}
-            className="border border-gray-200 dark:border-gray-700 rounded-lg p-4"
-          >
-            <div className="flex items-center gap-3 mb-3">
-              <span className="text-gray-500 dark:text-gray-400 font-medium">
-                #{index + 1}
-              </span>
-              <img
-                src={crypto.image}
-                alt={crypto.name}
-                className="w-8 h-8 rounded-full"
-              />
-              <div className="flex-1">
-                <div className="font-semibold text-gray-900 dark:text-white">
-                  {crypto.name}
+                  <div className="space-y-2">
+                    <div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+                        Preço
+                      </div>
+                      <div className="text-lg font-bold text-gray-900 dark:text-white">
+                        {formatPrice(crypto.current_price)}
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+                        24h
+                      </div>
+                      <div
+                        className={`inline-flex items-center gap-1 px-2 py-1 rounded text-sm font-semibold ${getPercentageBgColor(
+                          crypto.price_change_percentage_24h_in_currency || 0
+                        )} ${getPercentageColor(
+                          crypto.price_change_percentage_24h_in_currency || 0
+                        )}`}
+                      >
+                        {(crypto.price_change_percentage_24h_in_currency || 0) >= 0 ? (
+                          <TrendingUp className="w-3 h-3" />
+                        ) : (
+                          <TrendingDown className="w-3 h-3" />
+                        )}
+                        {formatPercentage(
+                          crypto.price_change_percentage_24h_in_currency || 0
+                        )}
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+                        Market Cap
+                      </div>
+                      <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        {formatLargeNumber(crypto.market_cap)}
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div className="text-sm text-gray-500 dark:text-gray-400 uppercase">
-                  {crypto.symbol}
-                </div>
-              </div>
-              <div className="text-right">
-                <div className="font-semibold text-gray-900 dark:text-white">
-                  {formatPrice(crypto.current_price)}
-                </div>
-              </div>
+              ))}
             </div>
 
-            <div className="grid grid-cols-2 gap-3 text-sm">
-              <div>
-                <div className="text-gray-500 dark:text-gray-400 mb-1">1h %</div>
-                <div className={`font-medium ${getPercentageColor(crypto.price_change_percentage_1h_in_currency || 0)}`}>
-                  {formatPercentage(crypto.price_change_percentage_1h_in_currency || 0)}
-                </div>
-              </div>
-              <div>
-                <div className="text-gray-500 dark:text-gray-400 mb-1">24h %</div>
-                <div className={`font-medium ${getPercentageColor(crypto.price_change_percentage_24h_in_currency || 0)}`}>
-                  {formatPercentage(crypto.price_change_percentage_24h_in_currency || 0)}
-                </div>
-              </div>
-              <div>
-                <div className="text-gray-500 dark:text-gray-400 mb-1">Volume 24h</div>
-                <div className="text-gray-700 dark:text-gray-300">
-                  {formatLargeNumber(crypto.total_volume)}
-                </div>
-              </div>
-              <div>
-                <div className="text-gray-500 dark:text-gray-400 mb-1">Market Cap</div>
-                <div className="text-gray-700 dark:text-gray-300">
-                  {formatLargeNumber(crypto.market_cap)}
-                </div>
-              </div>
-              <div className="col-span-2">
-                <div className="text-gray-500 dark:text-gray-400 mb-1">FDV</div>
-                <div className="font-semibold text-gray-900 dark:text-white">
-                  {crypto.fully_diluted_valuation
-                    ? formatLargeNumber(crypto.fully_diluted_valuation)
-                    : 'N/A'}
-                </div>
-              </div>
+            <div className="mt-4 text-xs text-gray-500 dark:text-gray-400 text-center">
+              Dados fornecidos por CoinGecko • Atualizado a cada 2 minutos
             </div>
           </div>
-        ))}
+        )}
       </div>
 
-      <div className="mt-4 text-xs text-gray-500 dark:text-gray-400 text-center">
-        Dados fornecidos por CoinGecko
-      </div>
+      <style jsx>{`
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
     </div>
   )
 }
