@@ -4,6 +4,7 @@ import PostCard from '@/components/posts/PostCard'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import NewsletterCTA from '@/components/ui/NewsletterCTA'
+import Top5Crypto from '@/components/crypto/Top5Crypto'
 
 export const revalidate = 60 // Revalidate every 60 seconds
 
@@ -36,6 +37,9 @@ export default async function Home() {
             </div>
           ) : (
             <>
+              {/* Top 5 Cryptos */}
+              <Top5Crypto />
+
               {/* Hero Section */}
               {heroPost && (
                 <section className="mb-12">
