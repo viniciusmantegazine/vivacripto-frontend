@@ -1,4 +1,4 @@
-import { getPosts, getPostBySlug } from '@/services/api'
+import { getPosts, getPostBySlug, Post } from '@/services/api'
 import { cleanMetaDescription, removeDuplicateTitle, stripMarkdown, calculateReadingTime, formatDate } from '@/lib/utils'
 import { notFound, redirect } from 'next/navigation'
 import Image from 'next/image'
@@ -76,7 +76,7 @@ export default async function PostPage({ params }: { params: { slug: string } })
   }
 
   // Fetch related posts
-  let relatedPosts = []
+  let relatedPosts: Post[] = []
   try {
     const { items: allPosts } = await getPosts({ page: 1, pageSize: 10, status: 'published' })
     relatedPosts = allPosts.filter((p) => p.id !== post.id).slice(0, 3)
