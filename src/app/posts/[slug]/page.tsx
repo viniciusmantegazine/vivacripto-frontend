@@ -10,17 +10,9 @@ import Breadcrumbs from '@/components/ui/Breadcrumbs'
 import RelatedPosts from '@/components/posts/RelatedPosts'
 import ShareButtons from '@/components/ui/ShareButtons'
 
-// Allow dynamic params for posts created after build
-export const dynamicParams = true
-// Revalidate every 60 seconds
-export const revalidate = 60
-
-export async function generateStaticParams() {
-  const { items: posts } = await getPosts({ page: 1, pageSize: 100, status: 'published' })
-  return posts.map((post) => ({
-    slug: post.slug,
-  }))
-}
+// Force dynamic rendering (SSR) for all posts
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
   const post = await getPostBySlug(params.slug)
