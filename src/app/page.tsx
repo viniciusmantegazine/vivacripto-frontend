@@ -6,7 +6,8 @@ import Footer from '@/components/layout/Footer'
 import NewsletterCTA from '@/components/ui/NewsletterCTA'
 import Top5Crypto from '@/components/crypto/Top5Crypto'
 
-export const revalidate = 60 // Revalidate every 60 seconds
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 export default async function Home() {
   console.log('[HOME] Fetching posts...')

@@ -5,6 +5,9 @@ import Footer from '@/components/layout/Footer'
 import PostCard from '@/components/posts/PostCard'
 import Breadcrumbs from '@/components/ui/Breadcrumbs'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 const categories = {
   bitcoin: { name: 'Bitcoin', description: 'Notícias sobre Bitcoin, a primeira e maior criptomoeda do mundo' },
   ethereum: { name: 'Ethereum', description: 'Atualizações sobre Ethereum, contratos inteligentes e DApps' },
