@@ -57,7 +57,7 @@ export async function getPosts(params: {
 
     console.log('[API] Fetching posts from:', url.toString())
     const res = await fetch(url.toString(), {
-      next: { revalidate: 60 }, // Cache for 60 seconds
+      cache: 'no-store', // No cache for dynamic content
     })
 
     console.log('[API] Response status:', res.status)
@@ -90,7 +90,7 @@ export async function getPosts(params: {
 export async function getPostBySlug(slug: string): Promise<Post | null> {
   try {
     const res = await fetch(`${API_URL}/posts/slug/${slug}`, {
-      next: { revalidate: 60 },
+      cache: 'no-store',
     })
 
     if (!res.ok) {
