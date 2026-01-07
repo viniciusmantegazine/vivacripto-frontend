@@ -46,9 +46,12 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 
 
 export default async function PostPage({ params }: { params: { slug: string } }) {
+  console.log('[POST PAGE] Slug received:', params.slug)
   const post = await getPostBySlug(params.slug)
+  console.log('[POST PAGE] Post fetched:', post ? 'found' : 'not found')
 
   if (!post) {
+    console.error('[POST PAGE] Post not found for slug:', params.slug)
     notFound()
   }
 

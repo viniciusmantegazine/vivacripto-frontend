@@ -89,17 +89,23 @@ export async function getPosts(params: {
 
 export async function getPostBySlug(slug: string): Promise<Post | null> {
   try {
-    const res = await fetch(`${API_URL}/posts/slug/${slug}`, {
+    const url = `${API_URL}/posts/slug/${slug}`
+    console.log('[API] Fetching post by slug:', url)
+    const res = await fetch(url, {
       cache: 'no-store',
     })
 
+    console.log('[API] Response status:', res.status)
     if (!res.ok) {
+      console.warn('[API] Post not found, status:', res.status)
       return null
     }
 
-    return res.json()
+    const post = await res.json()
+    console.log('[API] Post fetched successfully:', post.title)
+    return post
   } catch (error) {
-    console.warn('Error fetching post:', error)
+    console.error('[API] Error fetching post:', error)
     return null
   }
 }
