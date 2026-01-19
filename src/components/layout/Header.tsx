@@ -4,15 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { Search, Menu, X } from 'lucide-react'
 import ThemeToggle from '@/components/ui/ThemeToggle'
-
-const categories = [
-  { name: 'Bitcoin', slug: 'bitcoin' },
-  { name: 'Ethereum', slug: 'ethereum' },
-  { name: 'Altcoins', slug: 'altcoins' },
-  { name: 'DeFi', slug: 'defi' },
-  { name: 'Regulação', slug: 'regulacao' },
-  { name: 'Airdrop', slug: 'airdrop' },
-]
+import { CATEGORY_LIST } from '@/config/categories'
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -75,7 +67,7 @@ export default function Header() {
           <Link href="/" className="text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 font-medium transition-colors">
             Início
           </Link>
-          {categories.map((category) => (
+          {CATEGORY_LIST.map((category) => (
             <Link
               key={category.slug}
               href={`/categoria/${category.slug}`}
@@ -112,7 +104,7 @@ export default function Header() {
               >
                 Início
               </Link>
-              {categories.map((category) => (
+              {CATEGORY_LIST.map((category) => (
                 <Link
                   key={category.slug}
                   href={`/categoria/${category.slug}`}

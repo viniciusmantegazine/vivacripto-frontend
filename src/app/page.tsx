@@ -10,10 +10,7 @@ export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
 export default async function Home() {
-  console.log('[HOME] Fetching posts...')
   const { items: posts } = await getPosts({ page: 1, pageSize: 13, status: 'published' })
-  console.log('[HOME] Posts received:', posts.length)
-
   const [heroPost, ...regularPosts] = posts
 
   return (

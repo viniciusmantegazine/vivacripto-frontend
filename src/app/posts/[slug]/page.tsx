@@ -47,8 +47,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
         publishedTime: post.published_at,
       },
     }
-  } catch (error) {
-    console.error('[POST PAGE] Error generating metadata:', error)
+  } catch {
     return {
       title: 'VivaCripto',
       description: 'Portal de notícias sobre criptomoedas',
@@ -59,19 +58,9 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 
 
 export default async function PostPage({ params }: { params: { slug: string } }) {
-  console.log('[POST PAGE] Slug received:', params.slug)
-  
-  let post
-  try {
-    post = await getPostBySlug(params.slug)
-    console.log('[POST PAGE] Post fetched:', post ? 'found' : 'not found')
-  } catch (error) {
-    console.error('[POST PAGE] Error fetching post:', error)
-    notFound()
-  }
+  const post = await getPostBySlug(params.slug)
 
   if (!post) {
-    console.error('[POST PAGE] Post not found for slug:', params.slug)
     notFound()
   }
 
@@ -80,8 +69,8 @@ export default async function PostPage({ params }: { params: { slug: string } })
   try {
     const { items: allPosts } = await getPosts({ page: 1, pageSize: 10, status: 'published' })
     relatedPosts = allPosts.filter((p) => p.id !== post.id).slice(0, 3)
-  } catch (error) {
-    console.error('[POST PAGE] Error fetching related posts:', error)
+  } catch {
+    // Silently fail - related posts are not critical
   }
 
   // Remove duplicate title from content

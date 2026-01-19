@@ -40,8 +40,7 @@ export default function Top5Crypto() {
       setCryptos(data)
       setLoading(false)
       setError(false)
-    } catch (err) {
-      console.error('Error fetching crypto data:', err)
+    } catch {
       setError(true)
       setLoading(false)
     }

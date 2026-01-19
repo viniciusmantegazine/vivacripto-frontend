@@ -30,8 +30,8 @@ export default function ShareButtons({ title, url }: ShareButtonsProps) {
     try {
       await navigator.clipboard.writeText(url)
       alert('Link copiado para a área de transferência!')
-    } catch (err) {
-      console.error('Erro ao copiar link:', err)
+    } catch {
+      // Silently fail - clipboard API may not be available
     }
   }
 

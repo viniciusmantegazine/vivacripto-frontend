@@ -4,28 +4,18 @@ import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import PostCard from '@/components/posts/PostCard'
 import Breadcrumbs from '@/components/ui/Breadcrumbs'
+import { CATEGORY_SLUGS, getCategoryBySlug } from '@/config/categories'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
-const categories = {
-  bitcoin: { name: 'Bitcoin', description: 'Notícias sobre Bitcoin, a primeira e maior criptomoeda do mundo' },
-  ethereum: { name: 'Ethereum', description: 'Atualizações sobre Ethereum, contratos inteligentes e DApps' },
-  altcoins: { name: 'Altcoins', description: 'Notícias sobre criptomoedas alternativas ao Bitcoin' },
-  defi: { name: 'DeFi', description: 'Finanças descentralizadas e protocolos DeFi' },
-  regulacao: { name: 'Regulação', description: 'Regulamentação e legislação sobre criptomoedas' },
-  airdrop: { name: 'Airdrop', description: 'Airdrops, distribuições gratuitas de tokens e oportunidades' },
-}
-
 export async function generateStaticParams() {
-  return Object.keys(categories).map((slug) => ({
-    slug,
-  }))
+  return CATEGORY_SLUGS.map((slug) => ({ slug }))
 }
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
-  const category = categories[params.slug as keyof typeof categories]
-  
+  const category = getCategoryBySlug(params.slug)
+
   if (!category) {
     return {}
   }
@@ -37,7 +27,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 }
 
 export default async function CategoryPage({ params }: { params: { slug: string } }) {
-  const category = categories[params.slug as keyof typeof categories]
+  const category = getCategoryBySlug(params.slug)
 
   if (!category) {
     notFound()

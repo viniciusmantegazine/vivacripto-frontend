@@ -44,7 +44,6 @@ function SearchContent() {
     } catch (error) {
       // Ignore abort errors
       if (error instanceof Error && error.name === 'AbortError') return
-      console.error('Erro ao buscar:', error)
       setResults([])
     } finally {
       setLoading(false)

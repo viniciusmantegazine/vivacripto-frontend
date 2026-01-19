@@ -59,7 +59,6 @@ function validatePost(data: unknown): Post | null {
 
   // Required fields validation
   if (!isValidString(post.id) || !isValidString(post.title) || !isValidString(post.slug)) {
-    console.warn('[API] Invalid post: missing required fields')
     return null
   }
 
@@ -175,7 +174,6 @@ export async function getPosts(params: {
     })
 
     if (!res.ok) {
-      console.warn('[API] Failed to fetch posts, status:', res.status)
       return emptyResponse
     }
 
@@ -184,8 +182,7 @@ export async function getPosts(params: {
     // SECURITY: Validate response structure
     const validatedResponse = validatePostListResponse(data, pageSize)
     return validatedResponse
-  } catch (error) {
-    console.error('[API] Error fetching posts:', error)
+  } catch {
     return emptyResponse
   }
 }
@@ -193,14 +190,12 @@ export async function getPosts(params: {
 export async function getPostBySlug(slug: string): Promise<Post | null> {
   // SECURITY: Validate slug parameter
   if (!slug || typeof slug !== 'string' || slug.length > 200) {
-    console.warn('[API] Invalid slug parameter')
     return null
   }
 
   // SECURITY: Sanitize slug - only allow alphanumeric, hyphens, and underscores
   const sanitizedSlug = slug.replace(/[^a-zA-Z0-9-_]/g, '')
   if (sanitizedSlug !== slug) {
-    console.warn('[API] Slug contained invalid characters')
     return null
   }
 
@@ -211,22 +206,14 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
     })
 
     if (!res.ok) {
-      console.warn('[API] Post not found, status:', res.status)
       return null
     }
 
     const data = await res.json()
 
     // SECURITY: Validate response structure
-    const validatedPost = validatePost(data)
-    if (!validatedPost) {
-      console.warn('[API] Invalid post data received')
-      return null
-    }
-
-    return validatedPost
-  } catch (error) {
-    console.error('[API] Error fetching post:', error)
+    return validatePost(data)
+  } catch {
     return null
   }
 }
