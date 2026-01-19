@@ -1,7 +1,10 @@
 import Link from 'next/link'
+import { CATEGORY_LIST } from '@/config/categories'
 
 export default function Footer() {
   const currentYear = new Date().getFullYear()
+  // Show first 4 categories in footer
+  const footerCategories = CATEGORY_LIST.slice(0, 4)
 
   return (
     <footer className="bg-gray-900 text-gray-300">
@@ -21,34 +24,29 @@ export default function Footer() {
           </div>
 
           {/* Links Rápidos */}
-          <div>
-            <h3 className="text-white font-semibold mb-4">Links Rápidos</h3>
+          <nav aria-label="Categorias">
+            <h3 className="text-white font-semibold mb-4">Categorias</h3>
             <ul className="space-y-2">
               <li>
                 <Link href="/" className="hover:text-orange-500 transition-colors">
                   Início
                 </Link>
               </li>
-              <li>
-                <Link href="/categoria/bitcoin" className="hover:text-orange-500 transition-colors">
-                  Bitcoin
-                </Link>
-              </li>
-              <li>
-                <Link href="/categoria/ethereum" className="hover:text-orange-500 transition-colors">
-                  Ethereum
-                </Link>
-              </li>
-              <li>
-                <Link href="/categoria/defi" className="hover:text-orange-500 transition-colors">
-                  DeFi
-                </Link>
-              </li>
+              {footerCategories.map((category) => (
+                <li key={category.slug}>
+                  <Link
+                    href={`/categoria/${category.slug}`}
+                    className="hover:text-orange-500 transition-colors"
+                  >
+                    {category.name}
+                  </Link>
+                </li>
+              ))}
             </ul>
-          </div>
+          </nav>
 
           {/* Institucional */}
-          <div>
+          <nav aria-label="Links institucionais">
             <h3 className="text-white font-semibold mb-4">Institucional</h3>
             <ul className="space-y-2">
               <li>
@@ -72,7 +70,7 @@ export default function Footer() {
                 </Link>
               </li>
             </ul>
-          </div>
+          </nav>
         </div>
 
         {/* Copyright */}

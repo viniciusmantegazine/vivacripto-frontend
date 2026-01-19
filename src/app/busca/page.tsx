@@ -154,7 +154,7 @@ export default function SearchPage() {
     <>
       <Header />
       
-      <main className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <main id="main-content" className="min-h-screen bg-gray-50 dark:bg-gray-900" role="main">
         <Suspense fallback={
           <div className="container mx-auto px-4 py-8">
             <div className="flex justify-center items-center py-20">

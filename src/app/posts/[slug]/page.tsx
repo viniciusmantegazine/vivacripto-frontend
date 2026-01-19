@@ -104,7 +104,7 @@ export default async function PostPage({ params }: { params: { slug: string } })
   return (
     <>
       <Header />
-      <main className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <main id="main-content" className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

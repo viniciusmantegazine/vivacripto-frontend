@@ -16,7 +16,7 @@ export default async function Home() {
     <>
       <Header />
       
-      <main className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <main id="main-content" className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <div className="container mx-auto px-4 py-8">
           {posts.length === 0 ? (
             <div className="text-center py-20">
@@ -39,14 +39,14 @@ export default async function Home() {
 
               {/* Hero Section */}
               {heroPost && (
-                <section className="mb-12">
+                <section className="mb-12" aria-label="Notícia em destaque">
                   <HeroPost post={heroPost} />
                 </section>
               )}
 
               {/* Latest News Grid */}
               {regularPosts.length > 0 && (
-                <section className="mb-12">
+                <section className="mb-12" aria-label="Últimas notícias">
                   <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
                     <span className="w-1 h-8 bg-gradient-to-b from-orange-500 to-yellow-500 mr-3 rounded-full"></span>
                     Últimas Notícias

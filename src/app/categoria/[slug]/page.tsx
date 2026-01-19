@@ -50,7 +50,7 @@ export default async function CategoryPage({ params }: { params: { slug: string 
     <>
       <Header />
       
-      <main className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <main id="main-content" className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <div className="container mx-auto px-4 py-8">
           <Breadcrumbs items={breadcrumbItems} />
 
