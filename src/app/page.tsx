@@ -3,7 +3,6 @@ import HeroPost from '@/components/posts/HeroPost'
 import PostCard from '@/components/posts/PostCard'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
-import NewsletterCTA from '@/components/ui/NewsletterCTA'
 import Top5Crypto from '@/components/crypto/Top5Crypto'
 
 // ISR: Revalidate every 60 seconds for fresh content with good caching
@@ -60,10 +59,6 @@ export default async function Home() {
                 </section>
               )}
 
-              {/* Newsletter CTA */}
-              <section className="mb-12">
-                <NewsletterCTA />
-              </section>
             </>
           )}
         </div>

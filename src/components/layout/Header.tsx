@@ -1,19 +1,21 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Search, Menu, X } from 'lucide-react'
 import ThemeToggle from '@/components/ui/ThemeToggle'
 import { CATEGORY_LIST } from '@/config/categories'
 
 export default function Header() {
+  const router = useRouter()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
     if (searchQuery.trim()) {
-      window.location.href = `/busca?q=${encodeURIComponent(searchQuery)}`
+      router.push(`/busca?q=${encodeURIComponent(searchQuery)}`)
     }
   }
 

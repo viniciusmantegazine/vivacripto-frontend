@@ -1,6 +1,7 @@
 'use client'
 
-import { Twitter, Share2 } from 'lucide-react'
+import { useState } from 'react'
+import { Twitter, Share2, Check } from 'lucide-react'
 
 interface ShareButtonsProps {
   title: string
@@ -8,6 +9,8 @@ interface ShareButtonsProps {
 }
 
 export default function ShareButtons({ title, url }: ShareButtonsProps) {
+  const [showToast, setShowToast] = useState(false)
+
   const shareOnTwitter = () => {
     const text = encodeURIComponent(title)
     const shareUrl = encodeURIComponent(url)
@@ -29,15 +32,23 @@ export default function ShareButtons({ title, url }: ShareButtonsProps) {
   const copyToClipboard = async () => {
     try {
       await navigator.clipboard.writeText(url)
-      alert('Link copiado para a área de transferência!')
+      setShowToast(true)
+      setTimeout(() => setShowToast(false), 2000)
     } catch {
       // Silently fail - clipboard API may not be available
     }
   }
 
   return (
-    <div className="flex items-center gap-3 mb-8">
-      <span className="text-sm font-medium text-gray-700">Compartilhar:</span>
+    <div className="relative flex items-center gap-3 mb-8">
+      {/* Toast Notification */}
+      {showToast && (
+        <div className="absolute -top-12 left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg shadow-lg animate-fade-in">
+          <Check className="w-4 h-4" />
+          Link copiado!
+        </div>
+      )}
+      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Compartilhar:</span>
       
       {/* Twitter/X */}
       <button
