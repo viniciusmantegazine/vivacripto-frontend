@@ -6,8 +6,8 @@ import Footer from '@/components/layout/Footer'
 import NewsletterCTA from '@/components/ui/NewsletterCTA'
 import Top5Crypto from '@/components/crypto/Top5Crypto'
 
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
+// ISR: Revalidate every 60 seconds for fresh content with good caching
+export const revalidate = 60
 
 export default async function Home() {
   const { items: posts } = await getPosts({ page: 1, pageSize: 13, status: 'published' })

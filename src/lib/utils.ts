@@ -38,7 +38,7 @@ export function calculateReadingTime(content: string): number {
  * Removes prefixes, markdown syntax, and limits to 150 characters
  */
 export function cleanMetaDescription(text: string): string {
-  return text
+  const cleaned = text
     // Remove common prefixes like "Título:", "**Título:", etc.
     .replace(/^\*\*?\s*Título\s*:\s*/i, '')
     .replace(/^Título\s*:\s*/i, '')
@@ -52,10 +52,12 @@ export function cleanMetaDescription(text: string): string {
     // Clean up whitespace
     .replace(/\s+/g, ' ')
     .trim()
-    // Limit to 150 characters for meta description
-    .substring(0, 150)
-    // Add ellipsis if truncated
-    + (text.length > 150 ? '...' : '')
+
+  // Limit to 150 characters and add ellipsis only if truncated
+  if (cleaned.length > 150) {
+    return cleaned.substring(0, 150) + '...'
+  }
+  return cleaned
 }
 
 /**

@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Image from 'next/image'
 import { TrendingUp, TrendingDown, ChevronDown, ChevronUp } from 'lucide-react'
 
 interface CryptoData {
@@ -126,10 +127,13 @@ export default function Top5Crypto() {
                     key={crypto.id}
                     className="flex items-center gap-2 flex-shrink-0"
                   >
-                    <img
+                    <Image
                       src={crypto.image}
                       alt={crypto.name}
-                      className="w-5 h-5 rounded-full"
+                      width={20}
+                      height={20}
+                      className="rounded-full"
+                      unoptimized
                     />
                     <div className="flex items-center gap-1.5">
                       <span className="text-sm font-semibold text-gray-900 dark:text-white">
@@ -180,10 +184,13 @@ export default function Top5Crypto() {
                   className="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-4 hover:shadow-md transition-shadow"
                 >
                   <div className="flex items-center gap-3 mb-3">
-                    <img
+                    <Image
                       src={crypto.image}
                       alt={crypto.name}
-                      className="w-10 h-10 rounded-full"
+                      width={40}
+                      height={40}
+                      className="rounded-full"
+                      unoptimized
                     />
                     <div className="flex-1 min-w-0">
                       <div className="font-semibold text-gray-900 dark:text-white truncate">

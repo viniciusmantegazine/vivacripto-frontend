@@ -10,11 +10,19 @@ import Breadcrumbs from '@/components/ui/Breadcrumbs'
 import RelatedPosts from '@/components/posts/RelatedPosts'
 import ShareButtons from '@/components/ui/ShareButtons'
 
-// Force dynamic rendering (SSR) for all posts
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
-// Disable static generation completely
+// ISR: Revalidate every 60 seconds, allow dynamic params for new posts
+export const revalidate = 60
 export const dynamicParams = true
+
+// Pre-generate most recent posts at build time
+export async function generateStaticParams() {
+  try {
+    const { items: posts } = await getPosts({ page: 1, pageSize: 20, status: 'published' })
+    return posts.map((post) => ({ slug: post.slug }))
+  } catch {
+    return []
+  }
+}
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
   try {
