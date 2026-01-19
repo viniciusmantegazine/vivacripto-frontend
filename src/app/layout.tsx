@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     template: '%s | VivaCripto',
   },
   description: 'Portal de notícias sobre criptomoedas, Bitcoin, Ethereum e o mercado cripto. Informações atualizadas sobre preços, tendências e análises.',
-  metadataBase: new URL('https://vivacripto.com.br'),
+  metadataBase: new URL('https://verticecripto.com.br'),
   keywords: ['criptomoedas', 'bitcoin', 'ethereum', 'blockchain', 'defi', 'nft', 'mercado cripto', 'notícias crypto'],
   authors: [{ name: 'VivaCripto' }],
   creator: 'VivaCripto',

@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://vivacripto.com.br'
+  const baseUrl = 'https://verticecripto.com.br'
 
   const { items: posts } = await getPosts({ page: 1, pageSize: 1000, status: 'published' })
   
