@@ -2,23 +2,293 @@
 @tailwind components;
 @tailwind utilities;
 
+/* =====================================================
+   CSS Custom Properties - Sistema de Design
+   ===================================================== */
+
 @layer base {
+  :root {
+    /* Cores Light Mode */
+    --bg-primary: #ffffff;
+    --bg-secondary: #f3f4f6;
+    --bg-tertiary: #e5e7eb;
+    --text-primary: #111827;
+    --text-secondary: #4b5563;
+    --text-muted: #6b7280;
+    --border-color: #e5e7eb;
+
+    /* Cores da Marca */
+    --brand-orange: #f97316;
+    --brand-yellow: #fbbf24;
+    --brand-gradient: linear-gradient(135deg, var(--brand-orange), var(--brand-yellow));
+
+    /* Espaçamento (baseado em 8px) */
+    --space-1: 0.25rem;  /* 4px */
+    --space-2: 0.5rem;   /* 8px */
+    --space-3: 0.75rem;  /* 12px */
+    --space-4: 1rem;     /* 16px */
+    --space-5: 1.25rem;  /* 20px */
+    --space-6: 1.5rem;   /* 24px */
+    --space-8: 2rem;     /* 32px */
+    --space-10: 2.5rem;  /* 40px */
+    --space-12: 3rem;    /* 48px */
+    --space-16: 4rem;    /* 64px */
+
+    /* Tipografia */
+    --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+
+    /* Transições */
+    --transition-fast: 150ms ease;
+    --transition-base: 300ms ease;
+    --transition-slow: 500ms ease;
+
+    /* Border Radius */
+    --radius-sm: 0.375rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
+    --radius-2xl: 1.5rem;
+    --radius-full: 9999px;
+  }
+
+  .dark {
+    /* Cores Dark Mode */
+    --bg-primary: #0f172a;
+    --bg-secondary: #1e293b;
+    --bg-tertiary: #334155;
+    --text-primary: #f1f5f9;
+    --text-secondary: #cbd5e1;
+    --text-muted: #94a3b8;
+    --border-color: #334155;
+
+    /* Shadows para Dark Mode */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.3);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.5), 0 8px 10px -6px rgb(0 0 0 / 0.4);
+  }
+
+  /* Reset e Base */
   body {
     @apply antialiased;
+    font-family: var(--font-sans);
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+  }
+
+  /* Seleção de texto */
+  ::selection {
+    @apply bg-orange-500/30;
+  }
+
+  /* Focus visible para acessibilidade */
+  :focus-visible {
+    @apply outline-none ring-2 ring-orange-500 ring-offset-2 ring-offset-white dark:ring-offset-gray-900;
+  }
+
+  /* Smooth scroll */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Reduz movimento para usuários que preferem */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 }
 
-/* Prose styles for markdown content */
+/* =====================================================
+   Componentes Reutilizáveis
+   ===================================================== */
+
+@layer components {
+  /* Container responsivo */
+  .container-custom {
+    @apply w-full mx-auto px-4;
+    max-width: 1280px;
+  }
+
+  /* Card base */
+  .card {
+    @apply bg-white dark:bg-gray-800 rounded-xl shadow-md;
+    @apply transition-all duration-300;
+  }
+
+  .card-hover {
+    @apply hover:shadow-xl hover:-translate-y-1;
+  }
+
+  /* Badge base */
+  .badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full;
+    @apply text-sm font-semibold;
+    @apply transition-colors duration-200;
+  }
+
+  /* Botão primário */
+  .btn-primary {
+    @apply inline-flex items-center justify-center;
+    @apply px-6 py-3 rounded-lg font-semibold;
+    @apply bg-gradient-to-r from-orange-500 to-yellow-500;
+    @apply text-white shadow-md;
+    @apply hover:shadow-lg hover:scale-105;
+    @apply focus:ring-2 focus:ring-orange-500 focus:ring-offset-2;
+    @apply transition-all duration-300;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100;
+  }
+
+  /* Link animado */
+  .link-animated {
+    @apply relative inline-block;
+    @apply text-orange-600 dark:text-orange-400;
+    @apply hover:text-orange-700 dark:hover:text-orange-300;
+    @apply transition-colors duration-200;
+  }
+
+  .link-animated::after {
+    content: '';
+    @apply absolute left-0 bottom-0 w-0 h-0.5;
+    @apply bg-current transition-all duration-300;
+  }
+
+  .link-animated:hover::after {
+    @apply w-full;
+  }
+
+  /* Section title */
+  .section-title {
+    @apply text-2xl md:text-3xl font-bold;
+    @apply text-gray-900 dark:text-white;
+    @apply flex items-center mb-6;
+  }
+
+  .section-title::before {
+    content: '';
+    @apply w-1 h-8 mr-3 rounded-full;
+    background: var(--brand-gradient);
+  }
+}
+
+/* =====================================================
+   Utilitários Customizados
+   ===================================================== */
+
+@layer utilities {
+  /* Truncate com múltiplas linhas */
+  .line-clamp-1 {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Aspect ratios */
+  .aspect-video {
+    aspect-ratio: 16 / 9;
+  }
+
+  .aspect-card {
+    aspect-ratio: 4 / 3;
+  }
+
+  /* Gradient text */
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: var(--brand-gradient);
+  }
+
+  /* Scrollbar customizada */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: var(--text-muted) transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: var(--text-muted);
+    border-radius: 3px;
+  }
+
+  /* Hide scrollbar mas mantém funcionalidade */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Safe area para dispositivos com notch */
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* =====================================================
+   Prose Styles (para conteúdo markdown)
+   ===================================================== */
+
 .prose {
-  @apply text-gray-800;
+  @apply text-gray-800 dark:text-gray-200;
+  @apply max-w-none;
 }
 
 .prose h2 {
   @apply text-2xl font-bold mt-8 mb-4;
+  @apply text-gray-900 dark:text-white;
 }
 
 .prose h3 {
   @apply text-xl font-bold mt-6 mb-3;
+  @apply text-gray-900 dark:text-white;
+}
+
+.prose h4 {
+  @apply text-lg font-semibold mt-4 mb-2;
+  @apply text-gray-900 dark:text-white;
 }
 
 .prose p {
@@ -26,19 +296,36 @@
 }
 
 .prose a {
-  @apply text-blue-600 hover:text-blue-800 underline;
+  @apply text-orange-600 dark:text-orange-400;
+  @apply hover:text-orange-700 dark:hover:text-orange-300;
+  @apply underline decoration-orange-300 dark:decoration-orange-600;
+  @apply underline-offset-2 hover:decoration-orange-500;
+  @apply transition-colors duration-200;
 }
 
-.prose ul, .prose ol {
+.prose ul,
+.prose ol {
   @apply mb-4 ml-6;
 }
 
+.prose ul {
+  @apply list-disc;
+}
+
+.prose ol {
+  @apply list-decimal;
+}
+
 .prose li {
-  @apply mb-2;
+  @apply mb-2 leading-relaxed;
+}
+
+.prose li::marker {
+  @apply text-orange-500;
 }
 
 .prose strong {
-  @apply font-bold;
+  @apply font-bold text-gray-900 dark:text-white;
 }
 
 .prose em {
@@ -46,9 +333,111 @@
 }
 
 .prose code {
-  @apply bg-gray-100 px-2 py-1 rounded text-sm font-mono;
+  @apply bg-gray-100 dark:bg-gray-800;
+  @apply px-2 py-1 rounded text-sm font-mono;
+  @apply text-orange-600 dark:text-orange-400;
+}
+
+.prose pre {
+  @apply bg-gray-900 dark:bg-gray-950;
+  @apply p-4 rounded-lg overflow-x-auto mb-4;
+}
+
+.prose pre code {
+  @apply bg-transparent p-0 text-gray-100;
 }
 
 .prose blockquote {
-  @apply border-l-4 border-gray-300 pl-4 italic text-gray-700 my-4;
+  @apply border-l-4 border-orange-500 pl-4;
+  @apply italic text-gray-700 dark:text-gray-300 my-4;
+  @apply bg-gray-50 dark:bg-gray-800/50 py-2 pr-4 rounded-r;
 }
+
+.prose img {
+  @apply rounded-lg shadow-md my-6;
+}
+
+.prose hr {
+  @apply border-gray-200 dark:border-gray-700 my-8;
+}
+
+.prose table {
+  @apply w-full border-collapse mb-4;
+}
+
+.prose th {
+  @apply bg-gray-100 dark:bg-gray-800;
+  @apply px-4 py-2 text-left font-semibold;
+  @apply border border-gray-200 dark:border-gray-700;
+}
+
+.prose td {
+  @apply px-4 py-2;
+  @apply border border-gray-200 dark:border-gray-700;
+}
+
+.prose tr:hover {
+  @apply bg-gray-50 dark:bg-gray-800/50;
+}
+
+/* =====================================================
+   Animações
+   ===================================================== */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-soft {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.animate-slide-up {
+  animation: slideInUp 0.6s ease-out;
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 2s ease-in-out infinite;
+}
+
+/* Stagger animation para grids */
+.stagger-animation > * {
+  animation: fadeIn 0.5s ease-out both;
+}
+
+.stagger-animation > *:nth-child(1) { animation-delay: 0ms; }
+.stagger-animation > *:nth-child(2) { animation-delay: 50ms; }
+.stagger-animation > *:nth-child(3) { animation-delay: 100ms; }
+.stagger-animation > *:nth-child(4) { animation-delay: 150ms; }
+.stagger-animation > *:nth-child(5) { animation-delay: 200ms; }
+.stagger-animation > *:nth-child(6) { animation-delay: 250ms; }
+.stagger-animation > *:nth-child(7) { animation-delay: 300ms; }
+.stagger-animation > *:nth-child(8) { animation-delay: 350ms; }
+.stagger-animation > *:nth-child(9) { animation-delay: 400ms; }
