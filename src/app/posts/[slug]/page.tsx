@@ -1,5 +1,5 @@
 import { getPosts, getPostBySlug, Post } from '@/services/api'
-import { cleanMetaDescription, removeDuplicateTitle, stripMarkdown, calculateReadingTime, formatDate } from '@/lib/utils'
+import { cleanMetaDescription, removeDuplicateTitle, stripMarkdown, calculateReadingTime, formatDate, escapeJsonLd } from '@/lib/utils'
 import { notFound, redirect } from 'next/navigation'
 import Image from 'next/image'
 import ReactMarkdown from 'react-markdown'
@@ -88,16 +88,17 @@ export default async function PostPage({ params }: { params: { slug: string } })
   const cleanContent = removeDuplicateTitle(post.content_markdown, post.title)
   const readingTime = calculateReadingTime(cleanContent)
 
+  // SECURITY: Escape all user-generated content for JSON-LD to prevent XSS
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'NewsArticle',
-    headline: post.title,
-    image: [post.featured_image_url],
+    headline: escapeJsonLd(post.title),
+    image: [post.featured_image_url ? escapeJsonLd(post.featured_image_url) : null].filter(Boolean),
     datePublished: post.published_at,
     dateModified: post.updated_at,
     author: {
       '@type': 'Person',
-      name: post.author?.name || 'VivaCripto',
+      name: escapeJsonLd(post.author?.name) || 'VivaCripto',
     },
   }
 

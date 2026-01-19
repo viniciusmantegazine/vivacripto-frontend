@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, Suspense } from 'react'
+import { useState, useEffect, Suspense, useCallback } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Search, Loader2 } from 'lucide-react'
@@ -8,33 +8,33 @@ import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import PostCard from '@/components/posts/PostCard'
 import { Post } from '@/services/api'
+import { sanitizeSearchQuery } from '@/lib/utils'
 
 function SearchContent() {
   const searchParams = useSearchParams()
-  const query = searchParams.get('q') || ''
-  
+  const rawQuery = searchParams.get('q') || ''
+  // SECURITY: Sanitize query from URL params
+  const query = sanitizeSearchQuery(rawQuery)
+
   const [searchQuery, setSearchQuery] = useState(query)
   const [results, setResults] = useState<Post[]>([])
   const [loading, setLoading] = useState(false)
   const [searched, setSearched] = useState(false)
 
-  useEffect(() => {
-    if (query) {
-      performSearch(query)
-    }
-  }, [query])
-
-  const performSearch = async (q: string) => {
-    if (!q.trim()) return
+  const performSearch = useCallback(async (q: string, signal?: AbortSignal) => {
+    // SECURITY: Sanitize before sending to API
+    const sanitizedQuery = sanitizeSearchQuery(q)
+    if (!sanitizedQuery) return
 
     setLoading(true)
     setSearched(true)
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/posts/search?q=${encodeURIComponent(q)}&limit=50`
+        `${process.env.NEXT_PUBLIC_API_URL}/posts/search?q=${encodeURIComponent(sanitizedQuery)}&limit=50`,
+        { signal }
       )
-      
+
       if (response.ok) {
         const data = await response.json()
         setResults(data.results || [])
@@ -42,12 +42,24 @@ function SearchContent() {
         setResults([])
       }
     } catch (error) {
+      // Ignore abort errors
+      if (error instanceof Error && error.name === 'AbortError') return
       console.error('Erro ao buscar:', error)
       setResults([])
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    if (!query) return
+
+    // SECURITY: AbortController to prevent race conditions
+    const controller = new AbortController()
+    performSearch(query, controller.signal)
+
+    return () => controller.abort()
+  }, [query, performSearch])
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()

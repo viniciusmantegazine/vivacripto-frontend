@@ -87,17 +87,57 @@ export function removeDuplicateTitle(content: string, title: string): string {
 
 export function formatDate(dateString: string, format: 'short' | 'long' = 'long'): string {
   const date = new Date(dateString)
-  
+
   if (format === 'short') {
     return date.toLocaleDateString('pt-BR', {
       day: '2-digit',
       month: 'short',
     })
   }
-  
+
   return date.toLocaleDateString('pt-BR', {
     day: '2-digit',
     month: 'long',
     year: 'numeric',
   })
+}
+
+/**
+ * SECURITY: Sanitize search query to prevent injection attacks
+ * Removes potentially dangerous characters and limits length
+ */
+export function sanitizeSearchQuery(query: string): string {
+  if (!query || typeof query !== 'string') {
+    return ''
+  }
+
+  return query
+    // Remove HTML/script tags
+    .replace(/<[^>]*>/g, '')
+    // Remove potential SQL injection patterns
+    .replace(/['";\\]/g, '')
+    // Remove control characters
+    .replace(/[\x00-\x1F\x7F]/g, '')
+    // Limit length to prevent DoS
+    .substring(0, 200)
+    .trim()
+}
+
+/**
+ * SECURITY: Escape string for safe JSON-LD embedding
+ * Prevents XSS through structured data
+ */
+export function escapeJsonLd(value: string | null | undefined): string {
+  if (!value) return ''
+
+  return value
+    // Escape HTML entities
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    // Escape quotes for JSON context
+    .replace(/"/g, '&quot;')
+    // Remove script injection attempts
+    .replace(/javascript:/gi, '')
+    .replace(/on\w+=/gi, '')
 }

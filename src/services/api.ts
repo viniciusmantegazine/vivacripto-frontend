@@ -39,15 +39,130 @@ export interface PostListResponse {
   total_pages: number
 }
 
+/**
+ * SECURITY: Validate that a value is a non-empty string
+ */
+function isValidString(value: unknown): value is string {
+  return typeof value === 'string' && value.length > 0
+}
+
+/**
+ * SECURITY: Validate Post object structure from API response
+ * Returns null if validation fails
+ */
+function validatePost(data: unknown): Post | null {
+  if (!data || typeof data !== 'object') {
+    return null
+  }
+
+  const post = data as Record<string, unknown>
+
+  // Required fields validation
+  if (!isValidString(post.id) || !isValidString(post.title) || !isValidString(post.slug)) {
+    console.warn('[API] Invalid post: missing required fields')
+    return null
+  }
+
+  // Ensure content fields are strings (can be empty)
+  const content_markdown = typeof post.content_markdown === 'string' ? post.content_markdown : ''
+  const content_html = typeof post.content_html === 'string' ? post.content_html : ''
+  const excerpt = typeof post.excerpt === 'string' ? post.excerpt : ''
+
+  // Validate and sanitize the post object
+  return {
+    id: post.id as string,
+    title: post.title as string,
+    slug: post.slug as string,
+    content_markdown,
+    content_html,
+    excerpt,
+    featured_image_url: typeof post.featured_image_url === 'string' ? post.featured_image_url : null,
+    status: typeof post.status === 'string' ? post.status : 'draft',
+    published_at: typeof post.published_at === 'string' ? post.published_at : null,
+    created_at: typeof post.created_at === 'string' ? post.created_at : new Date().toISOString(),
+    updated_at: typeof post.updated_at === 'string' ? post.updated_at : new Date().toISOString(),
+    meta_title: typeof post.meta_title === 'string' ? post.meta_title : null,
+    meta_description: typeof post.meta_description === 'string' ? post.meta_description : null,
+    canonical_url: typeof post.canonical_url === 'string' ? post.canonical_url : null,
+    author: post.author && typeof post.author === 'object'
+      ? {
+          id: String((post.author as Record<string, unknown>).id || ''),
+          name: String((post.author as Record<string, unknown>).name || ''),
+        }
+      : null,
+    category: post.category && typeof post.category === 'object'
+      ? {
+          id: String((post.category as Record<string, unknown>).id || ''),
+          name: String((post.category as Record<string, unknown>).name || ''),
+          slug: String((post.category as Record<string, unknown>).slug || ''),
+        }
+      : null,
+    tags: Array.isArray(post.tags)
+      ? post.tags
+          .filter((tag): tag is Record<string, unknown> => tag && typeof tag === 'object')
+          .map((tag) => ({
+            id: String(tag.id || ''),
+            name: String(tag.name || ''),
+            slug: String(tag.slug || ''),
+          }))
+      : [],
+  }
+}
+
+/**
+ * SECURITY: Validate PostListResponse structure from API
+ */
+function validatePostListResponse(data: unknown, defaultPageSize: number): PostListResponse {
+  const emptyResponse: PostListResponse = {
+    items: [],
+    total: 0,
+    page: 1,
+    page_size: defaultPageSize,
+    total_pages: 0,
+  }
+
+  if (!data || typeof data !== 'object') {
+    return emptyResponse
+  }
+
+  const response = data as Record<string, unknown>
+
+  // Validate items array
+  const items: Post[] = []
+  if (Array.isArray(response.items)) {
+    for (const item of response.items) {
+      const validatedPost = validatePost(item)
+      if (validatedPost) {
+        items.push(validatedPost)
+      }
+    }
+  }
+
+  return {
+    items,
+    total: typeof response.total === 'number' ? response.total : items.length,
+    page: typeof response.page === 'number' ? response.page : 1,
+    page_size: typeof response.page_size === 'number' ? response.page_size : defaultPageSize,
+    total_pages: typeof response.total_pages === 'number' ? response.total_pages : 1,
+  }
+}
+
 export async function getPosts(params: {
   page?: number
   pageSize?: number
   status?: string
 }): Promise<PostListResponse> {
   const { page = 1, pageSize = 10, status = 'published' } = params
-  
+
+  const emptyResponse: PostListResponse = {
+    items: [],
+    total: 0,
+    page: 1,
+    page_size: pageSize,
+    total_pages: 0,
+  }
+
   try {
-    console.log('[API] API_URL:', API_URL)
     const url = new URL(`${API_URL}/posts`)
     url.searchParams.append('page', page.toString())
     url.searchParams.append('page_size', pageSize.toString())
@@ -55,55 +170,61 @@ export async function getPosts(params: {
       url.searchParams.append('status', status)
     }
 
-    console.log('[API] Fetching posts from:', url.toString())
     const res = await fetch(url.toString(), {
-      cache: 'no-store', // No cache for dynamic content
+      cache: 'no-store',
     })
 
-    console.log('[API] Response status:', res.status)
     if (!res.ok) {
-      console.warn('[API] Failed to fetch posts, returning empty list')
-      return {
-        items: [],
-        total: 0,
-        page: 1,
-        page_size: pageSize,
-        total_pages: 0,
-      }
+      console.warn('[API] Failed to fetch posts, status:', res.status)
+      return emptyResponse
     }
 
     const data = await res.json()
-    console.log('[API] Posts fetched:', data.total, 'total,', data.items.length, 'items')
-    return data
+
+    // SECURITY: Validate response structure
+    const validatedResponse = validatePostListResponse(data, pageSize)
+    return validatedResponse
   } catch (error) {
     console.error('[API] Error fetching posts:', error)
-    return {
-      items: [],
-      total: 0,
-      page: 1,
-      page_size: pageSize,
-      total_pages: 0,
-    }
+    return emptyResponse
   }
 }
 
 export async function getPostBySlug(slug: string): Promise<Post | null> {
+  // SECURITY: Validate slug parameter
+  if (!slug || typeof slug !== 'string' || slug.length > 200) {
+    console.warn('[API] Invalid slug parameter')
+    return null
+  }
+
+  // SECURITY: Sanitize slug - only allow alphanumeric, hyphens, and underscores
+  const sanitizedSlug = slug.replace(/[^a-zA-Z0-9-_]/g, '')
+  if (sanitizedSlug !== slug) {
+    console.warn('[API] Slug contained invalid characters')
+    return null
+  }
+
   try {
-    const url = `${API_URL}/posts/slug/${slug}`
-    console.log('[API] Fetching post by slug:', url)
+    const url = `${API_URL}/posts/slug/${encodeURIComponent(sanitizedSlug)}`
     const res = await fetch(url, {
       cache: 'no-store',
     })
 
-    console.log('[API] Response status:', res.status)
     if (!res.ok) {
       console.warn('[API] Post not found, status:', res.status)
       return null
     }
 
-    const post = await res.json()
-    console.log('[API] Post fetched successfully:', post.title)
-    return post
+    const data = await res.json()
+
+    // SECURITY: Validate response structure
+    const validatedPost = validatePost(data)
+    if (!validatedPost) {
+      console.warn('[API] Invalid post data received')
+      return null
+    }
+
+    return validatedPost
   } catch (error) {
     console.error('[API] Error fetching post:', error)
     return null
