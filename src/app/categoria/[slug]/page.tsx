@@ -80,11 +80,18 @@ export default async function CategoryPage({ params }: { params: { slug: string 
           ) : (
             <div className="text-center py-20">
               <Image
-                src="/logo.png"
+                src="/logo-light.png"
                 alt="VerticeCripto"
                 width={120}
                 height={67}
-                className="mx-auto mb-6"
+                className="mx-auto mb-6 dark:hidden"
+              />
+              <Image
+                src="/logo-dark.png"
+                alt="VerticeCripto"
+                width={120}
+                height={67}
+                className="mx-auto mb-6 hidden dark:block"
               />
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
                 Nenhuma notícia nesta categoria ainda

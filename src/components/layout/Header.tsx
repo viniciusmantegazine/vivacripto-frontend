@@ -28,11 +28,19 @@ export default function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center">
             <Image
-              src="/logo.png"
+              src="/logo-light.png"
               alt="VerticeCripto"
               width={180}
               height={100}
-              className="h-12 w-auto"
+              className="h-12 w-auto dark:hidden"
+              priority
+            />
+            <Image
+              src="/logo-dark.png"
+              alt="VerticeCripto"
+              width={180}
+              height={100}
+              className="h-12 w-auto hidden dark:block"
               priority
             />
           </Link>

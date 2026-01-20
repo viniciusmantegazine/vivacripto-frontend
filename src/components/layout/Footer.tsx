@@ -15,7 +15,7 @@ export default function Footer() {
           <div className="col-span-1 md:col-span-2">
             <Link href="/" className="flex items-center mb-4">
               <Image
-                src="/logo.png"
+                src="/logo-dark.png"
                 alt="VerticeCripto"
                 width={180}
                 height={100}
