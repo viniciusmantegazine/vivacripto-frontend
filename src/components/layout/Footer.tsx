@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { CATEGORY_LIST } from '@/config/categories'
 
 export default function Footer() {
@@ -12,11 +13,14 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Logo e Descrição */}
           <div className="col-span-1 md:col-span-2">
-            <Link href="/" className="flex items-center space-x-2 mb-4">
-              <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-yellow-500 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xl">VC</span>
-              </div>
-              <span className="text-2xl font-bold text-white">VivaCripto</span>
+            <Link href="/" className="flex items-center mb-4">
+              <Image
+                src="/logo.png"
+                alt="VerticeCripto"
+                width={180}
+                height={100}
+                className="h-12 w-auto"
+              />
             </Link>
             <p className="text-gray-400 mb-4 max-w-md">
               Seu portal de notícias sobre criptomoedas em português. Informação clara, objetiva e atualizada sobre o mercado cripto.
@@ -75,7 +79,7 @@ export default function Footer() {
 
         {/* Copyright */}
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400 text-sm">
-          <p>© {currentYear} VivaCripto. Todos os direitos reservados.</p>
+          <p>© {currentYear} VerticeCripto. Todos os direitos reservados.</p>
           <p className="mt-2">
             Este site não oferece conselhos financeiros ou de investimento. Conteúdo meramente informativo.
           </p>

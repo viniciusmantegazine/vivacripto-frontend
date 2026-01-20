@@ -3,8 +3,8 @@ import Footer from '@/components/layout/Footer'
 import Breadcrumbs from '@/components/ui/Breadcrumbs'
 
 export const metadata = {
-  title: 'Termos de Uso - VivaCripto',
-  description: 'Termos de uso do portal VivaCripto.',
+  title: 'Termos de Uso - VerticeCripto',
+  description: 'Termos de uso do portal VerticeCripto.',
 }
 
 export default function TermsPage() {
@@ -30,7 +30,7 @@ export default function TermsPage() {
                   1. Aceitação dos Termos
                 </h2>
                 <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                  Ao acessar e usar o VivaCripto, você concorda com estes Termos de Uso e nossa 
+                  Ao acessar e usar o VerticeCripto, você concorda com estes Termos de Uso e nossa 
                   Política de Privacidade. Se você não concorda com algum termo, não utilize nosso site.
                 </p>
               </section>
@@ -40,7 +40,7 @@ export default function TermsPage() {
                   2. Natureza do Conteúdo
                 </h2>
                 <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
-                  O VivaCripto é um portal de notícias <strong>puramente informativo</strong>. 
+                  O VerticeCripto é um portal de notícias <strong>puramente informativo</strong>. 
                   Todo o conteúdo publicado:
                 </p>
                 <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-2">
@@ -57,7 +57,7 @@ export default function TermsPage() {
                 </h2>
                 <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
                   O mercado de criptomoedas é altamente volátil e envolve riscos significativos. 
-                  O VivaCripto não se responsabiliza por:
+                  O VerticeCripto não se responsabiliza por:
                 </p>
                 <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-2 mt-4">
                   <li>Perdas financeiras decorrentes de decisões baseadas em nosso conteúdo</li>
@@ -72,7 +72,7 @@ export default function TermsPage() {
                   4. Uso Aceitável
                 </h2>
                 <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                  Ao usar o VivaCripto, você concorda em:
+                  Ao usar o VerticeCripto, você concorda em:
                 </p>
                 <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-2 mt-4">
                   <li>Não copiar ou redistribuir nosso conteúdo sem autorização</li>
@@ -87,7 +87,7 @@ export default function TermsPage() {
                   5. Propriedade Intelectual
                 </h2>
                 <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                  Todo o conteúdo do VivaCripto, incluindo textos, imagens, logotipos e design, 
+                  Todo o conteúdo do VerticeCripto, incluindo textos, imagens, logotipos e design, 
                   é protegido por direitos autorais. O uso não autorizado pode resultar em ações legais.
                 </p>
               </section>
@@ -108,8 +108,8 @@ export default function TermsPage() {
                 </h2>
                 <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
                   Para questões sobre estes Termos de Uso, entre em contato através de{' '}
-                  <a href="mailto:contato@vivacripto.com.br" className="text-orange-600 dark:text-orange-400 hover:underline">
-                    contato@vivacripto.com.br
+                  <a href="mailto:contato@verticecripto.com.br" className="text-orange-600 dark:text-orange-400 hover:underline">
+                    contato@verticecripto.com.br
                   </a>
                 </p>
               </section>

@@ -4,8 +4,8 @@ import Breadcrumbs from '@/components/ui/Breadcrumbs'
 import { Mail, MessageSquare } from 'lucide-react'
 
 export const metadata = {
-  title: 'Contato - VivaCripto',
-  description: 'Entre em contato com a equipe do VivaCripto.',
+  title: 'Contato - VerticeCripto',
+  description: 'Entre em contato com a equipe do VerticeCripto.',
 }
 
 export default function ContactPage() {
@@ -41,10 +41,10 @@ export default function ContactPage() {
                   Para questões gerais, parcerias ou suporte:
                 </p>
                 <a
-                  href="mailto:contato@vivacripto.com.br"
+                  href="mailto:contato@verticecripto.com.br"
                   className="text-orange-600 dark:text-orange-400 font-semibold hover:underline"
                 >
-                  contato@vivacripto.com.br
+                  contato@verticecripto.com.br
                 </a>
               </div>
 
@@ -62,10 +62,10 @@ export default function ContactPage() {
                   Sua opinião é importante para nós:
                 </p>
                 <a
-                  href="mailto:feedback@vivacripto.com.br"
+                  href="mailto:feedback@verticecripto.com.br"
                   className="text-blue-600 dark:text-blue-400 font-semibold hover:underline"
                 >
-                  feedback@vivacripto.com.br
+                  feedback@verticecripto.com.br
                 </a>
               </div>
             </div>
@@ -81,7 +81,7 @@ export default function ContactPage() {
                     Vocês oferecem consultoria de investimentos?
                   </h3>
                   <p className="text-gray-700 dark:text-gray-300">
-                    Não. O VivaCripto é um portal puramente informativo. Não oferecemos conselhos 
+                    Não. O VerticeCripto é um portal puramente informativo. Não oferecemos conselhos 
                     financeiros ou recomendações de investimento.
                   </p>
                 </div>
@@ -98,7 +98,7 @@ export default function ContactPage() {
 
                 <div>
                   <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-                    Posso republicar conteúdo do VivaCripto?
+                    Posso republicar conteúdo do VerticeCripto?
                   </h3>
                   <p className="text-gray-700 dark:text-gray-300">
                     Entre em contato conosco para discutir parcerias e licenciamento de conteúdo.

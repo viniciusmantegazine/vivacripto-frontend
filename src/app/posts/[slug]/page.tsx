@@ -42,13 +42,13 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       title: post.meta_title || cleanTitle,
       description: cleanDescription,
       alternates: {
-        canonical: post.canonical_url || `https://vivacripto.com.br/posts/${post.slug}`,
+        canonical: post.canonical_url || `https://verticecripto.com.br/posts/${post.slug}`,
       },
       openGraph: {
         title: cleanTitle,
         description: cleanDescription,
-        url: `https://vivacripto.com.br/posts/${post.slug}`,
-        siteName: 'VivaCripto',
+        url: `https://verticecripto.com.br/posts/${post.slug}`,
+        siteName: 'VerticeCripto',
         images: [{ url: post.featured_image_url || '', width: 1200, height: 630 }],
         locale: 'pt_BR',
         type: 'article',
@@ -57,7 +57,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     }
   } catch {
     return {
-      title: 'VivaCripto',
+      title: 'VerticeCripto',
       description: 'Portal de notícias sobre criptomoedas',
     }
   }
@@ -95,7 +95,7 @@ export default async function PostPage({ params }: { params: { slug: string } })
     dateModified: post.updated_at,
     author: {
       '@type': 'Person',
-      name: escapeJsonLd(post.author?.name) || 'VivaCripto',
+      name: escapeJsonLd(post.author?.name) || 'VerticeCripto',
     },
   }
 
@@ -148,7 +148,7 @@ export default async function PostPage({ params }: { params: { slug: string } })
 
             {/* Share Buttons */}
             <ShareButtons
-              url={`https://vivacripto.com.br/posts/${post.slug}`}
+              url={`https://verticecripto.com.br/posts/${post.slug}`}
               title={cleanTitle}
             />
           </header>

@@ -3,8 +3,8 @@ import Footer from '@/components/layout/Footer'
 import Breadcrumbs from '@/components/ui/Breadcrumbs'
 
 export const metadata = {
-  title: 'Política de Privacidade - VivaCripto',
-  description: 'Política de privacidade do portal VivaCripto.',
+  title: 'Política de Privacidade - VerticeCripto',
+  description: 'Política de privacidade do portal VerticeCripto.',
 }
 
 export default function PrivacyPage() {
@@ -30,7 +30,7 @@ export default function PrivacyPage() {
                   1. Introdução
                 </h2>
                 <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                  O VivaCripto respeita sua privacidade e está comprometido em proteger seus dados pessoais. 
+                  O VerticeCripto respeita sua privacidade e está comprometido em proteger seus dados pessoais. 
                   Esta Política de Privacidade explica como coletamos, usamos e protegemos suas informações 
                   em conformidade com a Lei Geral de Proteção de Dados (LGPD).
                 </p>
@@ -105,8 +105,8 @@ export default function PrivacyPage() {
                 </ul>
                 <p className="text-gray-700 dark:text-gray-300 leading-relaxed mt-4">
                   Para exercer seus direitos, entre em contato através de{' '}
-                  <a href="mailto:privacidade@vivacripto.com.br" className="text-orange-600 dark:text-orange-400 hover:underline">
-                    privacidade@vivacripto.com.br
+                  <a href="mailto:privacidade@verticecripto.com.br" className="text-orange-600 dark:text-orange-400 hover:underline">
+                    privacidade@verticecripto.com.br
                   </a>
                 </p>
               </section>
@@ -147,8 +147,8 @@ export default function PrivacyPage() {
                 </h2>
                 <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
                   Para questões sobre privacidade, entre em contato através de{' '}
-                  <a href="mailto:privacidade@vivacripto.com.br" className="text-orange-600 dark:text-orange-400 hover:underline">
-                    privacidade@vivacripto.com.br
+                  <a href="mailto:privacidade@verticecripto.com.br" className="text-orange-600 dark:text-orange-400 hover:underline">
+                    privacidade@verticecripto.com.br
                   </a>
                 </p>
               </section>

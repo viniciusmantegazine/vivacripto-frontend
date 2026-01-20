@@ -3,8 +3,8 @@ import Footer from '@/components/layout/Footer'
 import Breadcrumbs from '@/components/ui/Breadcrumbs'
 
 export const metadata = {
-  title: 'Sobre Nós - VivaCripto',
-  description: 'Conheça o VivaCripto, seu portal de notícias sobre criptomoedas em português.',
+  title: 'Sobre Nós - VerticeCripto',
+  description: 'Conheça o VerticeCripto, seu portal de notícias sobre criptomoedas em português.',
 }
 
 export default function AboutPage() {
@@ -18,12 +18,12 @@ export default function AboutPage() {
 
           <article className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 md:p-12">
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
-              Sobre o VivaCripto
+              Sobre o VerticeCripto
             </h1>
 
             <div className="prose prose-lg dark:prose-invert max-w-none">
               <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
-                O <strong>VivaCripto</strong> é o seu portal de notícias sobre criptomoedas em português, 
+                O <strong>VerticeCripto</strong> é o seu portal de notícias sobre criptomoedas em português, 
                 criado para manter você informado sobre as últimas novidades do mercado cripto de forma 
                 clara, objetiva e acessível.
               </p>
@@ -56,7 +56,7 @@ export default function AboutPage() {
                 Nosso Compromisso
               </h2>
               <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
-                O VivaCripto é um portal <strong>puramente informativo</strong>. Não oferecemos 
+                O VerticeCripto é um portal <strong>puramente informativo</strong>. Não oferecemos 
                 conselhos financeiros, recomendações de investimento ou calls de trade. Nosso 
                 objetivo é informar, não influenciar decisões de investimento.
               </p>

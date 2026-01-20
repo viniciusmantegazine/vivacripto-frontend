@@ -7,15 +7,15 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: {
-    default: 'VivaCripto - Notícias sobre Criptomoedas',
-    template: '%s | VivaCripto',
+    default: 'VerticeCripto - Notícias sobre Criptomoedas',
+    template: '%s | VerticeCripto',
   },
   description: 'Portal de notícias sobre criptomoedas, Bitcoin, Ethereum e o mercado cripto. Informações atualizadas sobre preços, tendências e análises.',
   metadataBase: new URL('https://verticecripto.com.br'),
   keywords: ['criptomoedas', 'bitcoin', 'ethereum', 'blockchain', 'defi', 'nft', 'mercado cripto', 'notícias crypto'],
-  authors: [{ name: 'VivaCripto' }],
-  creator: 'VivaCripto',
-  publisher: 'VivaCripto',
+  authors: [{ name: 'VerticeCripto' }],
+  creator: 'VerticeCripto',
+  publisher: 'VerticeCripto',
   formatDetection: {
     email: false,
     telephone: false,
@@ -23,11 +23,11 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'pt_BR',
-    siteName: 'VivaCripto',
+    siteName: 'VerticeCripto',
   },
   twitter: {
     card: 'summary_large_image',
-    creator: '@vivacripto',
+    creator: '@verticecripto',
   },
   robots: {
     index: true,

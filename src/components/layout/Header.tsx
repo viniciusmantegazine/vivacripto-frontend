@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Search, Menu, X } from 'lucide-react'
 import ThemeToggle from '@/components/ui/ThemeToggle'
 import { CATEGORY_LIST } from '@/config/categories'
@@ -25,11 +26,15 @@ export default function Header() {
         {/* Top Bar */}
         <div className="flex items-center justify-between py-4">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-yellow-500 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-xl">VC</span>
-            </div>
-            <span className="text-2xl font-bold text-gray-900 dark:text-white">VivaCripto</span>
+          <Link href="/" className="flex items-center">
+            <Image
+              src="/logo.png"
+              alt="VerticeCripto"
+              width={180}
+              height={100}
+              className="h-12 w-auto"
+              priority
+            />
           </Link>
 
           {/* Desktop Search */}

@@ -1,5 +1,6 @@
 import { getPosts } from '@/services/api'
 import { notFound } from 'next/navigation'
+import Image from 'next/image'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import PostCard from '@/components/posts/PostCard'
@@ -21,7 +22,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 
   return {
-    title: `${category.name} - VivaCripto`,
+    title: `${category.name} - VerticeCripto`,
     description: category.description,
   }
 }
@@ -78,9 +79,13 @@ export default async function CategoryPage({ params }: { params: { slug: string 
             </>
           ) : (
             <div className="text-center py-20">
-              <div className="w-20 h-20 bg-gradient-to-br from-orange-500 to-yellow-500 rounded-full flex items-center justify-center mx-auto mb-6">
-                <span className="text-white text-3xl font-bold">VC</span>
-              </div>
+              <Image
+                src="/logo.png"
+                alt="VerticeCripto"
+                width={120}
+                height={67}
+                className="mx-auto mb-6"
+              />
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
                 Nenhuma notícia nesta categoria ainda
               </h2>
