@@ -160,6 +160,7 @@ const PROPER_NOUNS = [
   'API', 'CEO', 'CFO', 'CTO', 'IPO', 'ICO', 'IDO', 'IEO', 'TVL', 'APY', 'APR',
   'BTC', 'ETH', 'SOL', 'ADA', 'DOT', 'AVAX', 'MATIC', 'LINK', 'UNI', 'AAVE',
   'L1', 'L2', 'Web3', 'GameFi', 'SocialFi', 'ReFi', 'CeFi', 'TradFi',
+  'PIB', 'GDP', 'CBDC', 'CBDCs', 'KYC', 'AML', 'P2P', 'DCA', 'FOMO', 'FUD', 'HODL',
   // Órgãos reguladores
   'SEC', 'CFTC', 'FBI', 'DOJ', 'IRS', 'FED', 'BCE', 'FMI', 'CVM', 'Bacen',
   // Empresas e exchanges
@@ -171,6 +172,8 @@ const PROPER_NOUNS = [
   'OpenSea', 'Blur', 'Magic Eden', 'Rarible', 'Foundation',
   'MetaMask', 'Ledger', 'Trezor', 'Trust Wallet', 'Phantom',
   'Schwab', 'Kalshi', 'NYSE', 'Nasdaq', 'CME', 'CBOE',
+  'Citizens', 'Citi', 'Citibank', 'Morgan Stanley', 'Deutsche Bank', 'HSBC',
+  'Santander', 'Itaú', 'Bradesco', 'Nubank', 'XP', 'BTG Pactual',
   // Países e estados
   'Brasil', 'EUA', 'China', 'Japão', 'Coreia', 'Rússia', 'Índia',
   'Reino Unido', 'Alemanha', 'França', 'Suíça', 'Singapura', 'Dubai',

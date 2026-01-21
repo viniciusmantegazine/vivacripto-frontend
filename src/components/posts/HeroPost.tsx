@@ -12,7 +12,7 @@ interface HeroPostProps {
 export default function HeroPost({ post }: HeroPostProps) {
   const readingTime = calculateReadingTime(post.content_markdown)
   const cleanTitle = formatTitle(stripMarkdown(post.title))
-  const cleanExcerpt = cleanMetaDescription(post.excerpt)
+  const cleanExcerpt = formatTitle(cleanMetaDescription(post.excerpt))
 
   return (
     <Link href={`/posts/${post.slug}`} className="group block">

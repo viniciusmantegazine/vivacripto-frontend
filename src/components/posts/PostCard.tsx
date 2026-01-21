@@ -14,7 +14,7 @@ interface PostCardProps {
 export default function PostCard({ post, variant = 'standard', priority = false }: PostCardProps) {
   const readingTime = calculateReadingTime(post.content_markdown)
   const cleanTitle = formatTitle(stripMarkdown(post.title))
-  const cleanExcerpt = stripMarkdown(post.excerpt)
+  const cleanExcerpt = formatTitle(stripMarkdown(post.excerpt))
 
   // Classes de grid baseadas na variante
   const gridClasses = {

@@ -19,7 +19,7 @@ interface HeroSectionProps {
 export default function HeroSection({ mainPost, secondaryPosts = [] }: HeroSectionProps) {
   const mainReadingTime = calculateReadingTime(mainPost.content_markdown)
   const mainCleanTitle = formatTitle(stripMarkdown(mainPost.title))
-  const mainCleanExcerpt = cleanMetaDescription(mainPost.excerpt)
+  const mainCleanExcerpt = formatTitle(cleanMetaDescription(mainPost.excerpt))
 
   return (
     <section className="mb-12" aria-label="Notícias em destaque">
