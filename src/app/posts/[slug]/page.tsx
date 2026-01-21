@@ -1,5 +1,5 @@
 import { getPosts, getPostBySlug, Post } from '@/services/api'
-import { cleanMetaDescription, removeDuplicateTitle, stripMarkdown, calculateReadingTime, formatDate, escapeJsonLd } from '@/lib/utils'
+import { cleanMetaDescription, removeDuplicateTitle, stripMarkdown, calculateReadingTime, formatDate, escapeJsonLd, formatTitle } from '@/lib/utils'
 import { notFound, redirect } from 'next/navigation'
 import Image from 'next/image'
 import ReactMarkdown from 'react-markdown'
@@ -99,7 +99,7 @@ export default async function PostPage({ params }: { params: { slug: string } })
     },
   }
 
-  const cleanTitle = stripMarkdown(post.title)
+  const cleanTitle = formatTitle(stripMarkdown(post.title))
 
   return (
     <>

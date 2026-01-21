@@ -2,7 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Clock, Calendar } from 'lucide-react'
 import { Post } from '@/services/api'
-import { stripMarkdown, calculateReadingTime, formatDate } from '@/lib/utils'
+import { stripMarkdown, calculateReadingTime, formatDate, formatTitle } from '@/lib/utils'
 import CategoryBadge from '@/components/ui/CategoryBadge'
 
 interface PostCardProps {
@@ -13,7 +13,7 @@ interface PostCardProps {
 
 export default function PostCard({ post, variant = 'standard', priority = false }: PostCardProps) {
   const readingTime = calculateReadingTime(post.content_markdown)
-  const cleanTitle = stripMarkdown(post.title)
+  const cleanTitle = formatTitle(stripMarkdown(post.title))
   const cleanExcerpt = stripMarkdown(post.excerpt)
 
   // Classes de grid baseadas na variante

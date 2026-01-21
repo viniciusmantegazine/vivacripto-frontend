@@ -8,7 +8,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Clock, Calendar } from 'lucide-react'
 import { Post } from '@/services/api'
-import { stripMarkdown, cleanMetaDescription, calculateReadingTime, formatDate } from '@/lib/utils'
+import { stripMarkdown, cleanMetaDescription, calculateReadingTime, formatDate, formatTitle } from '@/lib/utils'
 import CategoryBadge from '@/components/ui/CategoryBadge'
 
 interface HeroSectionProps {
@@ -18,7 +18,7 @@ interface HeroSectionProps {
 
 export default function HeroSection({ mainPost, secondaryPosts = [] }: HeroSectionProps) {
   const mainReadingTime = calculateReadingTime(mainPost.content_markdown)
-  const mainCleanTitle = stripMarkdown(mainPost.title)
+  const mainCleanTitle = formatTitle(stripMarkdown(mainPost.title))
   const mainCleanExcerpt = cleanMetaDescription(mainPost.excerpt)
 
   return (
@@ -107,7 +107,7 @@ interface SecondaryCardProps {
 
 function SecondaryCard({ post }: SecondaryCardProps) {
   const readingTime = calculateReadingTime(post.content_markdown)
-  const cleanTitle = stripMarkdown(post.title)
+  const cleanTitle = formatTitle(stripMarkdown(post.title))
 
   return (
     <Link href={`/posts/${post.slug}`} className="group block flex-1">

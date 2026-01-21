@@ -2,7 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Clock } from 'lucide-react'
 import { Post } from '@/services/api'
-import { stripMarkdown, calculateReadingTime } from '@/lib/utils'
+import { stripMarkdown, calculateReadingTime, formatTitle } from '@/lib/utils'
 import CategoryBadge from '@/components/ui/CategoryBadge'
 
 interface RelatedPostsProps {
@@ -28,7 +28,7 @@ export default function RelatedPosts({ posts }: RelatedPostsProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {posts.slice(0, 3).map((post) => {
           const readingTime = calculateReadingTime(post.content_markdown)
-          const cleanTitle = stripMarkdown(post.title)
+          const cleanTitle = formatTitle(stripMarkdown(post.title))
 
           return (
             <Link

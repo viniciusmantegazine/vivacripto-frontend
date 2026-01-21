@@ -2,7 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Clock, Calendar } from 'lucide-react'
 import { Post } from '@/services/api'
-import { stripMarkdown, cleanMetaDescription, calculateReadingTime, formatDate } from '@/lib/utils'
+import { stripMarkdown, cleanMetaDescription, calculateReadingTime, formatDate, formatTitle } from '@/lib/utils'
 import CategoryBadge from '@/components/ui/CategoryBadge'
 
 interface HeroPostProps {
@@ -11,7 +11,7 @@ interface HeroPostProps {
 
 export default function HeroPost({ post }: HeroPostProps) {
   const readingTime = calculateReadingTime(post.content_markdown)
-  const cleanTitle = stripMarkdown(post.title)
+  const cleanTitle = formatTitle(stripMarkdown(post.title))
   const cleanExcerpt = cleanMetaDescription(post.excerpt)
 
   return (
