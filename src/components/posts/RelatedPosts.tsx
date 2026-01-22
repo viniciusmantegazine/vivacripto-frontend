@@ -25,7 +25,7 @@ export default function RelatedPosts({ posts }: RelatedPostsProps) {
         Leia Também
       </h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
         {posts.slice(0, 3).map((post) => {
           const readingTime = calculateReadingTime(post.content_markdown)
           const cleanTitle = formatTitle(stripMarkdown(post.title))

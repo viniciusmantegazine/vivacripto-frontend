@@ -27,7 +27,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: { params: { slug: string } }) {
   try {
     const post = await getPostBySlug(params.slug)
-    
+
     if (!post) {
       return {
         title: 'Post não encontrado',
@@ -35,11 +35,12 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       }
     }
 
-    const cleanTitle = stripMarkdown(post.title)
-    const cleanDescription = cleanMetaDescription(post.meta_description || post.excerpt)
-    
+    // Aplicar formatTitle() para capitalização correta em português brasileiro
+    const cleanTitle = formatTitle(stripMarkdown(post.title))
+    const cleanDescription = formatTitle(cleanMetaDescription(post.meta_description || post.excerpt))
+
     return {
-      title: post.meta_title || cleanTitle,
+      title: post.meta_title ? formatTitle(post.meta_title) : cleanTitle,
       description: cleanDescription,
       alternates: {
         canonical: post.canonical_url || `https://verticecripto.com.br/posts/${post.slug}`,
@@ -53,6 +54,12 @@ export async function generateMetadata({ params }: { params: { slug: string } })
         locale: 'pt_BR',
         type: 'article',
         publishedTime: post.published_at,
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: cleanTitle,
+        description: cleanDescription,
+        images: post.featured_image_url ? [post.featured_image_url] : [],
       },
     }
   } catch {

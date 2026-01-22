@@ -40,7 +40,7 @@ export default function ArticleGrid({
       </h2>
 
       {/* Grid responsivo: 1 col mobile, 2 cols tablet, 3 cols desktop */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
         {posts.map((post, index) => {
           const variant = getCardVariant(index)
 
@@ -118,7 +118,7 @@ export function ArticleGridMixed({ posts, title = 'Mais Notícias' }: ArticleGri
 
       {/* Cards Featured (2 colunas no desktop) */}
       {featuredPosts.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mb-8">
           {featuredPosts.map((post, index) => (
             <PostCard
               key={post.id}
@@ -132,7 +132,7 @@ export function ArticleGridMixed({ posts, title = 'Mais Notícias' }: ArticleGri
 
       {/* Cards Standard (3 colunas no desktop) */}
       {standardPosts.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-8">
           {standardPosts.map((post) => (
             <PostCard key={post.id} post={post} variant="standard" />
           ))}
@@ -141,7 +141,7 @@ export function ArticleGridMixed({ posts, title = 'Mais Notícias' }: ArticleGri
 
       {/* Cards Compact (linha horizontal ou grid) */}
       {compactPosts.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {compactPosts.map((post) => (
             <PostCard key={post.id} post={post} variant="compact" />
           ))}

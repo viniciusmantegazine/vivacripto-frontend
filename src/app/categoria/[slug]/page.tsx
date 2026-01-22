@@ -71,7 +71,7 @@ export default async function CategoryPage({ params }: { params: { slug: string 
               <p className="text-gray-600 dark:text-gray-400 mb-6">
                 <strong>{filteredPosts.length}</strong> {filteredPosts.length === 1 ? 'notícia encontrada' : 'notícias encontradas'}
               </p>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                 {filteredPosts.map((post) => (
                   <PostCard key={post.id} post={post} />
                 ))}

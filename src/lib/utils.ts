@@ -161,8 +161,10 @@ const PROPER_NOUNS = [
   'BTC', 'ETH', 'SOL', 'ADA', 'DOT', 'AVAX', 'MATIC', 'LINK', 'UNI', 'AAVE',
   'L1', 'L2', 'Web3', 'GameFi', 'SocialFi', 'ReFi', 'CeFi', 'TradFi',
   'PIB', 'GDP', 'CBDC', 'CBDCs', 'KYC', 'AML', 'P2P', 'DCA', 'FOMO', 'FUD', 'HODL',
-  // Órgãos reguladores
+  'iShares', 'IBIT',
+  // Órgãos reguladores e instituições
   'SEC', 'CFTC', 'FBI', 'DOJ', 'IRS', 'FED', 'BCE', 'FMI', 'CVM', 'Bacen',
+  'Senado', 'Congresso', 'Casa Branca', 'Tesouro',
   // Empresas e exchanges
   'Binance', 'Coinbase', 'Kraken', 'FTX', 'Gemini', 'Bitfinex', 'Bitstamp',
   'OKX', 'Bybit', 'KuCoin', 'Huobi', 'Gate.io', 'Mercado Bitcoin',
@@ -174,15 +176,18 @@ const PROPER_NOUNS = [
   'Schwab', 'Kalshi', 'NYSE', 'Nasdaq', 'CME', 'CBOE',
   'Citizens', 'Citi', 'Citibank', 'Morgan Stanley', 'Deutsche Bank', 'HSBC',
   'Santander', 'Itaú', 'Bradesco', 'Nubank', 'XP', 'BTG Pactual',
-  // Países e estados
+  'Maple', 'CoinDesk', 'Steak n Shake',
+  // Países, estados e lugares
   'Brasil', 'EUA', 'China', 'Japão', 'Coreia', 'Rússia', 'Índia',
   'Reino Unido', 'Alemanha', 'França', 'Suíça', 'Singapura', 'Dubai',
   'El Salvador', 'Portugal', 'Argentina', 'México', 'Canadá', 'Austrália',
   'Massachusetts', 'MA', 'NY', 'CA', 'TX', 'FL', 'Wyoming', 'Delaware',
+  'Estados Unidos', 'Davos', 'Hong Kong',
   // Pessoas notáveis
   'Satoshi Nakamoto', 'Vitalik Buterin', 'Changpeng Zhao', 'CZ',
   'Brian Armstrong', 'Sam Bankman-Fried', 'SBF', 'Michael Saylor',
   'Elon Musk', 'Gary Gensler', 'Jerome Powell', 'Janet Yellen',
+  'Sidney Powell', "Kevin O'Leary", 'Donald Trump', 'Joe Biden',
   // Outros termos
   'Ethereum Foundation', 'Bitcoin Foundation', 'Crypto Valley',
   'Silicon Valley', 'Wall Street', 'Main Street',
