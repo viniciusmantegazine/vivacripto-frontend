@@ -160,14 +160,15 @@ export default async function PostPage({ params }: { params: { slug: string } })
             />
           </header>
 
-          {/* Featured Image */}
+          {/* Featured Image - object-contain para mostrar imagem completa sem cortes */}
           {post.featured_image_url && (
-            <div className="relative w-full h-[400px] md:h-[500px] mb-8 rounded-lg overflow-hidden">
+            <div className="relative w-full mb-8 rounded-lg overflow-hidden bg-gray-900">
               <Image
                 src={post.featured_image_url}
                 alt={cleanTitle}
-                fill
-                className="object-cover"
+                width={1200}
+                height={675}
+                className="w-full h-auto object-contain"
                 priority
               />
             </div>
