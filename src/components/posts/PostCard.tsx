@@ -11,6 +11,31 @@ interface PostCardProps {
   priority?: boolean
 }
 
+// Gradientes de fallback por categoria para cards sem imagem
+const categoryGradients: Record<string, string> = {
+  bitcoin: 'from-orange-500 via-orange-400 to-yellow-500',
+  ethereum: 'from-purple-600 via-purple-500 to-indigo-500',
+  altcoins: 'from-blue-600 via-blue-500 to-cyan-500',
+  defi: 'from-green-600 via-green-500 to-emerald-500',
+  regulacao: 'from-red-600 via-red-500 to-rose-500',
+  airdrop: 'from-yellow-500 via-amber-400 to-orange-400',
+}
+
+// Componente de fallback para imagem com gradiente e ícone por categoria
+function ImageFallback({ categorySlug }: { categorySlug?: string }) {
+  const gradient = categoryGradients[categorySlug || ''] || 'from-orange-400 via-amber-400 to-yellow-500'
+
+  return (
+    <div className={`w-full h-full bg-gradient-to-br ${gradient} flex items-center justify-center`}>
+      <div className="text-white/20">
+        <svg className="w-16 h-16" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-1.67v-1.89c-1.71-.36-3.16-1.46-3.27-3.26h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h1.67v1.89c1.86.45 2.79 1.86 2.85 3.19H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.91s4.18 1.39 4.18 3.91c-.01 1.83-1.38 2.83-3.12 3.16z"/>
+        </svg>
+      </div>
+    </div>
+  )
+}
+
 export default function PostCard({ post, variant = 'standard', priority = false }: PostCardProps) {
   const readingTime = calculateReadingTime(post.content_markdown)
   const cleanTitle = formatTitle(stripMarkdown(post.title))
@@ -39,7 +64,7 @@ export default function PostCard({ post, variant = 'standard', priority = false 
                 sizes="160px"
               />
             ) : (
-              <div className="w-full h-full bg-gradient-to-br from-orange-400 to-yellow-500" />
+              <ImageFallback categorySlug={post.category?.slug} />
             )}
           </div>
 
@@ -92,7 +117,7 @@ export default function PostCard({ post, variant = 'standard', priority = false 
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 66vw, 800px"
               />
             ) : (
-              <div className="w-full h-full bg-gradient-to-br from-orange-400 to-yellow-500" />
+              <ImageFallback categorySlug={post.category?.slug} />
             )}
 
             {/* Gradient overlay para melhor legibilidade */}
@@ -150,7 +175,7 @@ export default function PostCard({ post, variant = 'standard', priority = false 
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-orange-400 to-yellow-500" />
+            <ImageFallback categorySlug={post.category?.slug} />
           )}
 
           {/* Gradient overlay sutil */}

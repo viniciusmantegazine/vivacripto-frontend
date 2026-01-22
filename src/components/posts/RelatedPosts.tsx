@@ -5,6 +5,16 @@ import { Post } from '@/services/api'
 import { stripMarkdown, calculateReadingTime, formatTitle } from '@/lib/utils'
 import CategoryBadge from '@/components/ui/CategoryBadge'
 
+// Gradientes de fallback por categoria
+const categoryGradients: Record<string, string> = {
+  bitcoin: 'from-orange-500 via-orange-400 to-yellow-500',
+  ethereum: 'from-purple-600 via-purple-500 to-indigo-500',
+  altcoins: 'from-blue-600 via-blue-500 to-cyan-500',
+  defi: 'from-green-600 via-green-500 to-emerald-500',
+  regulacao: 'from-red-600 via-red-500 to-rose-500',
+  airdrop: 'from-yellow-500 via-amber-400 to-orange-400',
+}
+
 interface RelatedPostsProps {
   posts: Post[]
 }
@@ -48,7 +58,7 @@ export default function RelatedPosts({ posts }: RelatedPostsProps) {
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
                   ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-orange-400 to-yellow-500" />
+                    <div className={`w-full h-full bg-gradient-to-br ${categoryGradients[post.category?.slug || ''] || 'from-orange-400 to-yellow-500'}`} />
                   )}
 
                   {/* Gradient overlay sutil */}

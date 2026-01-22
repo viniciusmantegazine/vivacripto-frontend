@@ -1,19 +1,23 @@
 import { getPosts } from '@/services/api'
 import HeroSection from '@/components/posts/HeroSection'
-import ArticleGrid from '@/components/posts/ArticleGrid'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import Top5Crypto from '@/components/crypto/Top5Crypto'
+import LoadMorePosts from '@/components/posts/LoadMorePosts'
 
 // ISR: Revalidate every 60 seconds for fresh content with good caching
 export const revalidate = 60
 
+// Número de posts por página para o "Carregar Mais"
+const GRID_PAGE_SIZE = 12
+
 export default async function Home() {
-  const { items: posts } = await getPosts({ page: 1, pageSize: 13, status: 'published' })
+  // Buscar mais posts inicialmente (3 hero + 12 grid = 15)
+  const { items: posts, total } = await getPosts({ page: 1, pageSize: 15, status: 'published' })
 
   // Separar posts para diferentes seções
   // Hero: 1 principal + 2 secundários
-  // Grid: restante dos posts
+  // Grid: restante dos posts (com "Carregar Mais")
   const heroMainPost = posts[0]
   const heroSecondaryPosts = posts.slice(1, 3)
   const gridPosts = posts.slice(3)
@@ -51,13 +55,22 @@ export default async function Home() {
                 />
               )}
 
-              {/* Grid de Notícias com hierarquia visual */}
+              {/* Grid de Notícias com "Carregar Mais" */}
               {gridPosts.length > 0 && (
-                <ArticleGrid
-                  posts={gridPosts}
-                  title="Últimas Notícias"
-                  showFeatured={false}
-                />
+                <section className="mb-12" aria-label="Últimas Notícias">
+                  {/* Título da seção */}
+                  <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
+                    <span className="w-1 h-8 bg-gradient-to-b from-orange-500 to-yellow-500 mr-3 rounded-full" aria-hidden="true" />
+                    Últimas Notícias
+                  </h2>
+
+                  <LoadMorePosts
+                    initialPosts={gridPosts}
+                    totalPosts={total - 3}
+                    initialPage={1}
+                    pageSize={GRID_PAGE_SIZE}
+                  />
+                </section>
               )}
             </>
           )}

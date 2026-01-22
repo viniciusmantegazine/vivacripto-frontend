@@ -10,6 +10,34 @@ import PostCard from '@/components/posts/PostCard'
 import { Post } from '@/services/api'
 import { sanitizeSearchQuery } from '@/lib/utils'
 
+/**
+ * Normaliza texto para busca (remove acentos e converte para minúsculas)
+ */
+function normalizeText(text: string): string {
+  return text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim()
+}
+
+/**
+ * Busca local nos posts quando a API de busca falha
+ */
+function searchPostsLocally(posts: Post[], query: string): Post[] {
+  const normalizedQuery = normalizeText(query)
+  if (!normalizedQuery) return []
+
+  return posts.filter(post => {
+    const searchableText = normalizeText(`
+      ${post.title}
+      ${post.excerpt}
+      ${post.category?.name || ''}
+    `)
+    return searchableText.includes(normalizedQuery)
+  })
+}
+
 function SearchContent() {
   const searchParams = useSearchParams()
   const rawQuery = searchParams.get('q') || ''
@@ -30,14 +58,32 @@ function SearchContent() {
     setSearched(true)
 
     try {
-      const response = await fetch(
+      // Tentar busca via API dedicada de search
+      const searchResponse = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/posts/search?q=${encodeURIComponent(sanitizedQuery)}&limit=50`,
         { signal }
       )
 
-      if (response.ok) {
-        const data = await response.json()
-        setResults(data.results || [])
+      if (searchResponse.ok) {
+        const data = await searchResponse.json()
+        const searchResults = data.results || []
+        if (searchResults.length > 0) {
+          setResults(searchResults)
+          return
+        }
+      }
+
+      // Fallback: buscar todos os posts e filtrar localmente
+      const postsResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/posts?page=1&page_size=100&status=published`,
+        { signal }
+      )
+
+      if (postsResponse.ok) {
+        const data = await postsResponse.json()
+        const allPosts = data.items || []
+        const localResults = searchPostsLocally(allPosts, sanitizedQuery)
+        setResults(localResults)
       } else {
         setResults([])
       }
@@ -122,6 +168,25 @@ function SearchContent() {
               <p className="text-gray-600 dark:text-gray-400 mb-6">
                 Não encontramos notícias com o termo "{query}"
               </p>
+
+              {/* Sugestões de busca */}
+              <div className="mb-8">
+                <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4">
+                  Tente pesquisar por:
+                </h3>
+                <div className="flex flex-wrap justify-center gap-2">
+                  {['Bitcoin', 'Ethereum', 'DeFi', 'Regulação', 'Altcoins', 'Airdrop'].map(term => (
+                    <Link
+                      key={term}
+                      href={`/busca?q=${encodeURIComponent(term)}`}
+                      className="px-4 py-2 bg-gray-100 dark:bg-gray-800 hover:bg-orange-100 dark:hover:bg-orange-900/30 rounded-full text-sm text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors"
+                    >
+                      {term}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+
               <Link
                 href="/"
                 className="inline-block px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg transition-colors"
