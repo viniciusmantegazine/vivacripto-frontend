@@ -36,7 +36,7 @@ export default function Header() {
               priority
             />
             <Image
-              src="/logo-dark.png"
+              src="/logo-dark-header.png"
               alt="VerticeCripto"
               width={180}
               height={100}

@@ -15,11 +15,18 @@ export default function Footer() {
           <div className="col-span-1 md:col-span-2">
             <Link href="/" className="flex items-center mb-4">
               <Image
-                src="/logo-dark.png"
+                src="/logo-light.png"
                 alt="VerticeCripto"
                 width={180}
                 height={100}
-                className="h-12 w-auto"
+                className="h-12 w-auto dark:hidden"
+              />
+              <Image
+                src="/logo-dark-footer.png"
+                alt="VerticeCripto"
+                width={180}
+                height={100}
+                className="h-12 w-auto hidden dark:block"
               />
             </Link>
             <p className="text-gray-400 mb-4 max-w-md">
