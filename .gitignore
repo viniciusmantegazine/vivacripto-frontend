@@ -9,6 +9,11 @@ yarn.lock
 out/
 build/
 dist/
+next-env.d.ts
+
+# TypeScript
+tsconfig.tsbuildinfo
+*.tsbuildinfo
 
 # Environment
 .env
