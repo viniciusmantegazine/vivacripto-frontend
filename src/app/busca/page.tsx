@@ -60,32 +60,23 @@ function SearchContent() {
     setSearched(true)
 
     try {
-      // Tentar busca via API dedicada de search
-      const searchResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/posts/search?q=${encodeURIComponent(sanitizedQuery)}&limit=50`,
+      // Use local API route to avoid CORS issues
+      const response = await fetch(
+        `/api/search?q=${encodeURIComponent(sanitizedQuery)}&limit=50`,
         { signal }
       )
 
-      if (searchResponse.ok) {
-        const data = await searchResponse.json()
+      if (response.ok) {
+        const data = await response.json()
         const searchResults = data.results || []
-        if (searchResults.length > 0) {
+
+        // If fallback mode, filter locally
+        if (data.fallback && searchResults.length > 0) {
+          const localResults = searchPostsLocally(searchResults, sanitizedQuery)
+          setResults(localResults)
+        } else {
           setResults(searchResults)
-          return
         }
-      }
-
-      // Fallback: buscar todos os posts e filtrar localmente
-      const postsResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/posts?page=1&page_size=100&status=published`,
-        { signal }
-      )
-
-      if (postsResponse.ok) {
-        const data = await postsResponse.json()
-        const allPosts = data.items || []
-        const localResults = searchPostsLocally(allPosts, sanitizedQuery)
-        setResults(localResults)
       } else {
         setResults([])
       }
