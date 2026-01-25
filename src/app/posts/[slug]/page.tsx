@@ -198,7 +198,16 @@ export default async function PostPage({ params }: { params: { slug: string } })
               prose-pre:bg-gray-900 dark:prose-pre:bg-gray-950
               prose-pre:text-gray-100
               prose-img:rounded-lg prose-img:shadow-md">
-              <ReactMarkdown>{cleanContent}</ReactMarkdown>
+              <ReactMarkdown
+                components={{
+                  h1: ({ children }) => <h1>{formatTitle(String(children))}</h1>,
+                  h2: ({ children }) => <h2>{formatTitle(String(children))}</h2>,
+                  h3: ({ children }) => <h3>{formatTitle(String(children))}</h3>,
+                  h4: ({ children }) => <h4>{formatTitle(String(children))}</h4>,
+                }}
+              >
+                {cleanContent}
+              </ReactMarkdown>
             </div>
 
             {/* Disclaimer */}
