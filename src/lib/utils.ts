@@ -176,7 +176,7 @@ const PROPER_NOUNS = [
   'Schwab', 'Kalshi', 'NYSE', 'Nasdaq', 'CME', 'CBOE',
   'Citizens', 'Citi', 'Citibank', 'Morgan Stanley', 'Deutsche Bank', 'HSBC',
   'Santander', 'Itaú', 'Bradesco', 'Nubank', 'XP', 'BTG Pactual',
-  'Maple', 'CoinDesk', 'Steak n Shake',
+  'Maple', 'CoinDesk', 'Steak n Shake', 'Backpack',
   // Países, estados e lugares
   'Brasil', 'EUA', 'China', 'Japão', 'Coreia', 'Rússia', 'Índia',
   'Reino Unido', 'Alemanha', 'França', 'Suíça', 'Singapura', 'Dubai',
