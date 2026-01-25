@@ -32,7 +32,9 @@ function searchPostsLocally(posts: Post[], query: string): Post[] {
     const searchableText = normalizeText(`
       ${post.title}
       ${post.excerpt}
+      ${post.content_markdown}
       ${post.category?.name || ''}
+      ${post.tags?.map(t => t.name).join(' ') || ''}
     `)
     return searchableText.includes(normalizedQuery)
   })
