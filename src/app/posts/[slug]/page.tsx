@@ -3,7 +3,7 @@ import { cleanMetaDescription, removeDuplicateTitle, stripMarkdown, calculateRea
 import { notFound, redirect } from 'next/navigation'
 import Image from 'next/image'
 import ReactMarkdown from 'react-markdown'
-import { Clock, Calendar, Share2 } from 'lucide-react'
+import { Clock, Calendar, Share2, User } from 'lucide-react'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import Breadcrumbs from '@/components/ui/Breadcrumbs'
@@ -93,17 +93,41 @@ export default async function PostPage({ params }: { params: { slug: string } })
   const readingTime = calculateReadingTime(cleanContent)
 
   // SECURITY: Escape all user-generated content for JSON-LD to prevent XSS
+  const postUrl = `https://verticecripto.com.br/posts/${post.slug}`
+  const cleanDescription = cleanMetaDescription(post.meta_description || post.excerpt)
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'NewsArticle',
     headline: escapeJsonLd(post.title),
+    description: escapeJsonLd(cleanDescription),
     image: [post.featured_image_url ? escapeJsonLd(post.featured_image_url) : null].filter(Boolean),
     datePublished: post.published_at,
     dateModified: post.updated_at,
+    inLanguage: 'pt-BR',
+    url: postUrl,
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': postUrl,
+    },
     author: {
       '@type': 'Person',
-      name: escapeJsonLd(post.author?.name) || 'VerticeCripto',
+      name: escapeJsonLd(post.author?.name) || 'Redação VerticeCripto',
     },
+    publisher: {
+      '@type': 'Organization',
+      name: 'VerticeCripto',
+      url: 'https://verticecripto.com.br',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://verticecripto.com.br/logo-light.png',
+      },
+    },
+    ...(post.category && {
+      articleSection: escapeJsonLd(post.category.name),
+    }),
+    ...(post.tags && post.tags.length > 0 && {
+      keywords: post.tags.map((tag) => escapeJsonLd(tag.name)).join(', '),
+    }),
   }
 
   const cleanTitle = formatTitle(stripMarkdown(post.title))
@@ -137,6 +161,12 @@ export default async function PostPage({ params }: { params: { slug: string } })
 
             <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-300 mb-6">
               <div className="flex items-center gap-2">
+                <User className="w-4 h-4" />
+                <span>
+                  Por <strong className="text-gray-900 dark:text-white">{post.author?.name || 'Redação VerticeCripto'}</strong>
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4" />
                 <time dateTime={post.published_at || undefined}>
                   {formatDate(post.published_at || post.created_at)}
@@ -165,7 +195,11 @@ export default async function PostPage({ params }: { params: { slug: string } })
             <div className="relative w-full mb-8 rounded-lg overflow-hidden bg-gray-900">
               <Image
                 src={post.featured_image_url}
-                alt={cleanTitle}
+                alt={
+                  post.category
+                    ? `Ilustração editorial sobre ${post.category.name.toLowerCase()}: ${cleanTitle}`
+                    : `Ilustração editorial: ${cleanTitle}`
+                }
                 width={1200}
                 height={675}
                 className="w-full h-auto object-contain"
