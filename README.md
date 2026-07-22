@@ -1,6 +1,6 @@
-# VivaCripto Frontend
+# VerticeCripto Frontend
 
-Frontend Next.js 14+ para o portal de notícias VivaCripto.
+Frontend Next.js 14+ para o portal de notícias VerticeCripto.
 
 ## 🚀 Stack Técnico
 
@@ -43,8 +43,8 @@ src/
 
 1. Clone o repositório:
 ```bash
-git clone https://github.com/viniciusmantegazine/vivacripto-frontend.git
-cd vivacripto-frontend
+git clone https://github.com/viniciusmantegazine/verticecripto-frontend.git
+cd verticecripto-frontend
 ```
 
 2. Instale as dependências:

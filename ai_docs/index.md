@@ -2,7 +2,7 @@
 
 ## Visão Geral
 
-O **VerticeCripto** (anteriormente VivaCripto) é um portal de notícias sobre criptomoedas desenvolvido em Next.js 14. Este repositório contém o código do frontend, que consome uma API backend própria para exibir artigos, notícias e informações sobre o mercado de criptomoedas.
+O **VerticeCripto** (anteriormente VerticeCripto) é um portal de notícias sobre criptomoedas desenvolvido em Next.js 14. Este repositório contém o código do frontend, que consome uma API backend própria para exibir artigos, notícias e informações sobre o mercado de criptomoedas.
 
 O portal é voltado para o público geral interessado em criptomoedas, oferecendo conteúdo informativo sobre Bitcoin, Ethereum, altcoins, DeFi, regulação e airdrops.
 
@@ -48,7 +48,7 @@ O portal é voltado para o público geral interessado em criptomoedas, oferecend
 ```bash
 # Clonar repositório
 git clone <repo-url>
-cd vivacripto-frontend
+cd verticecripto-frontend
 
 # Instalar dependências
 npm install
