@@ -64,8 +64,24 @@ export function getCategoryBySlug(slug: string): Category | null {
 }
 
 /**
- * Check if a slug is a valid category
+ * Gradientes de fallback por categoria (usados em cards sem imagem).
+ * Fonte única para HeroSection, PostCard e RelatedPosts.
  */
-export function isValidCategorySlug(slug: string): boolean {
-  return slug in CATEGORIES
+export const CATEGORY_GRADIENTS: Record<string, string> = {
+  bitcoin: 'from-orange-500 via-orange-400 to-yellow-500',
+  ethereum: 'from-purple-600 via-purple-500 to-indigo-500',
+  altcoins: 'from-blue-600 via-blue-500 to-cyan-500',
+  defi: 'from-green-600 via-green-500 to-emerald-500',
+  regulacao: 'from-red-600 via-red-500 to-rose-500',
+  airdrop: 'from-yellow-500 via-amber-400 to-orange-400',
+}
+
+export const DEFAULT_CATEGORY_GRADIENT =
+  'from-orange-400 via-amber-400 to-yellow-500'
+
+/**
+ * Retorna o gradiente para um slug de categoria (com fallback).
+ */
+export function getCategoryGradient(categorySlug?: string | null): string {
+  return CATEGORY_GRADIENTS[categorySlug || ''] || DEFAULT_CATEGORY_GRADIENT
 }

@@ -4,16 +4,36 @@ import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import Top5Crypto from '@/components/crypto/Top5Crypto'
 import LoadMorePosts from '@/components/posts/LoadMorePosts'
+import type { Metadata } from 'next'
+
+// Canonical da home (resolvido contra metadataBase do layout).
+export const metadata: Metadata = {
+  alternates: {
+    canonical: '/',
+  },
+}
 
 // ISR: Revalidate every 60 seconds for fresh content with good caching
 export const revalidate = 60
 
-// Número de posts por página para o "Carregar Mais"
-const GRID_PAGE_SIZE = 12
+// Posts do hero (não entram no grid paginado).
+const HERO_COUNT = 3
+// Tamanho da página. A busca inicial traz hero(3) + grid(12) = 15 = página 1.
+// O "Carregar Mais" precisa usar o MESMO page_size para que a página 2
+// (offset 15) continue exatamente onde o grid parou (rank 16), sem repetir
+// os ranks 13–15 que já vieram na primeira página.
+const PAGE_SIZE = 15
 
 export default async function Home() {
-  // Buscar mais posts inicialmente (3 hero + 12 grid = 15)
-  const { items: posts, total } = await getPosts({ page: 1, pageSize: 15, status: 'published' })
+  // Buscar a primeira página (3 hero + 12 grid). Degrada para estado vazio se
+  // o backend falhar — um throw aqui derrubaria o prerender do build inteiro.
+  let posts: Awaited<ReturnType<typeof getPosts>>['items'] = []
+  let total = 0
+  try {
+    ;({ items: posts, total } = await getPosts({ page: 1, pageSize: PAGE_SIZE, status: 'published' }))
+  } catch (err) {
+    console.error('Home: falha ao buscar posts, renderizando estado vazio', err)
+  }
 
   // Separar posts para diferentes seções
   // Hero: 1 principal + 2 secundários
@@ -66,9 +86,9 @@ export default async function Home() {
 
                   <LoadMorePosts
                     initialPosts={gridPosts}
-                    totalPosts={total - 3}
+                    totalPosts={total - HERO_COUNT}
                     initialPage={1}
-                    pageSize={GRID_PAGE_SIZE}
+                    pageSize={PAGE_SIZE}
                   />
                 </section>
               )}

@@ -10,20 +10,7 @@ import { Clock, Calendar } from 'lucide-react'
 import { Post } from '@/services/api'
 import { stripMarkdown, cleanMetaDescription, calculateReadingTime, formatDate, formatTitle } from '@/lib/utils'
 import CategoryBadge from '@/components/ui/CategoryBadge'
-
-// Gradientes de fallback por categoria para posts sem imagem
-const categoryGradients: Record<string, string> = {
-  bitcoin: 'from-orange-500 via-orange-400 to-yellow-500',
-  ethereum: 'from-purple-600 via-purple-500 to-indigo-500',
-  altcoins: 'from-blue-600 via-blue-500 to-cyan-500',
-  defi: 'from-green-600 via-green-500 to-emerald-500',
-  regulacao: 'from-red-600 via-red-500 to-rose-500',
-  airdrop: 'from-yellow-500 via-amber-400 to-orange-400',
-}
-
-function getGradient(categorySlug?: string): string {
-  return categoryGradients[categorySlug || ''] || 'from-orange-400 via-amber-400 to-yellow-500'
-}
+import { getCategoryGradient } from '@/config/categories'
 
 interface HeroSectionProps {
   mainPost: Post
@@ -56,7 +43,7 @@ export default function HeroSection({ mainPost, secondaryPosts = [] }: HeroSecti
                   sizes="(max-width: 1024px) 100vw, 66vw"
                 />
               ) : (
-                <div className={`w-full h-full bg-gradient-to-br ${getGradient(mainPost.category?.slug)}`} />
+                <div className={`w-full h-full bg-gradient-to-br ${getCategoryGradient(mainPost.category?.slug)}`} />
               )}
 
               {/* Gradient Overlay para legibilidade */}
@@ -137,7 +124,7 @@ function SecondaryCard({ post }: SecondaryCardProps) {
               sizes="(max-width: 1024px) 100vw, 33vw"
             />
           ) : (
-            <div className={`w-full h-full bg-gradient-to-br ${getGradient(post.category?.slug)}`} />
+            <div className={`w-full h-full bg-gradient-to-br ${getCategoryGradient(post.category?.slug)}`} />
           )}
 
           {/* Gradient Overlay */}

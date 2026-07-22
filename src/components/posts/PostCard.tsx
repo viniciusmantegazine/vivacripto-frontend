@@ -4,6 +4,7 @@ import { Clock, Calendar } from 'lucide-react'
 import { Post } from '@/services/api'
 import { stripMarkdown, calculateReadingTime, formatDate, formatTitle } from '@/lib/utils'
 import CategoryBadge from '@/components/ui/CategoryBadge'
+import { getCategoryGradient } from '@/config/categories'
 
 interface PostCardProps {
   post: Post
@@ -11,19 +12,9 @@ interface PostCardProps {
   priority?: boolean
 }
 
-// Gradientes de fallback por categoria para cards sem imagem
-const categoryGradients: Record<string, string> = {
-  bitcoin: 'from-orange-500 via-orange-400 to-yellow-500',
-  ethereum: 'from-purple-600 via-purple-500 to-indigo-500',
-  altcoins: 'from-blue-600 via-blue-500 to-cyan-500',
-  defi: 'from-green-600 via-green-500 to-emerald-500',
-  regulacao: 'from-red-600 via-red-500 to-rose-500',
-  airdrop: 'from-yellow-500 via-amber-400 to-orange-400',
-}
-
 // Componente de fallback para imagem com gradiente e ícone por categoria
 function ImageFallback({ categorySlug }: { categorySlug?: string }) {
-  const gradient = categoryGradients[categorySlug || ''] || 'from-orange-400 via-amber-400 to-yellow-500'
+  const gradient = getCategoryGradient(categorySlug)
 
   return (
     <div className={`w-full h-full bg-gradient-to-br ${gradient} flex items-center justify-center`}>

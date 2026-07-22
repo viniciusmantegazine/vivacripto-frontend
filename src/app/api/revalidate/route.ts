@@ -1,5 +1,23 @@
-import { revalidatePath } from 'next/cache'
+import crypto from 'crypto'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { NextRequest, NextResponse } from 'next/server'
+
+// Only slugs matching this shape are safe to feed into revalidatePath.
+const POST_PATH_REGEX = /^\/posts\/[a-z0-9-]+$/
+
+/**
+ * Constant-time secret comparison. Compares lengths first (an early return on
+ * mismatched length does not leak the secret's content), then uses
+ * crypto.timingSafeEqual on equal-length buffers.
+ */
+function isValidSecret(provided: string, expected: string): boolean {
+  const providedBuf = Buffer.from(provided)
+  const expectedBuf = Buffer.from(expected)
+  if (providedBuf.length !== expectedBuf.length) {
+    return false
+  }
+  return crypto.timingSafeEqual(providedBuf, expectedBuf)
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,7 +32,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { secret } = body
+    const { secret, path } = body
 
     // SECURITY: Validar secret obrigatoriamente
     if (!secret || typeof secret !== 'string') {
@@ -24,20 +42,28 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // SECURITY: Comparação segura de strings para evitar timing attacks
-    if (secret.length !== revalidateSecret.length || secret !== revalidateSecret) {
+    // SECURITY: Comparação em tempo constante para evitar timing attacks
+    if (!isValidSecret(secret, revalidateSecret)) {
       return NextResponse.json(
         { message: 'Invalid secret' },
         { status: 401 }
       )
     }
 
-    // Revalidar páginas principais
+    // Revalida tudo que depende da lista de posts (mesma tag usada em api.ts)
+    revalidateTag('posts')
+    // Home sempre revalida
     revalidatePath('/')
-    revalidatePath('/posts')
+
+    // Se o backend enviou um caminho de post válido, revalida essa página também
+    const revalidatedPaths = ['/']
+    if (typeof path === 'string' && POST_PATH_REGEX.test(path)) {
+      revalidatePath(path)
+      revalidatedPaths.push(path)
+    }
 
     return NextResponse.json(
-      { revalidated: true, now: Date.now() },
+      { revalidated: true, tag: 'posts', paths: revalidatedPaths, now: Date.now() },
       { status: 200 }
     )
   } catch (error) {

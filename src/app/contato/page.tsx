@@ -4,8 +4,9 @@ import Breadcrumbs from '@/components/ui/Breadcrumbs'
 import { Mail, MessageSquare } from 'lucide-react'
 
 export const metadata = {
-  title: 'Contato - VerticeCripto',
+  title: 'Contato',
   description: 'Entre em contato com a equipe do VerticeCripto.',
+  alternates: { canonical: '/contato' },
 }
 
 export default function ContactPage() {

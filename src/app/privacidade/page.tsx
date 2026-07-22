@@ -3,8 +3,9 @@ import Footer from '@/components/layout/Footer'
 import Breadcrumbs from '@/components/ui/Breadcrumbs'
 
 export const metadata = {
-  title: 'Política de Privacidade - VerticeCripto',
+  title: 'Política de Privacidade',
   description: 'Política de privacidade do portal VerticeCripto.',
+  alternates: { canonical: '/privacidade' },
 }
 
 export default function PrivacyPage() {

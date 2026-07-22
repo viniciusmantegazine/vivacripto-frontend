@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import Script from 'next/script'
 import { ThemeProvider } from '@/components/providers/ThemeProvider'
+import { SITE_URL } from '@/config/site'
 import '../styles/globals.css'
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID
@@ -14,7 +15,7 @@ export const metadata: Metadata = {
     template: '%s | VerticeCripto',
   },
   description: 'Portal de notícias sobre criptomoedas, Bitcoin, Ethereum e o mercado cripto. Informações atualizadas sobre preços, tendências e análises.',
-  metadataBase: new URL('https://verticecripto.com.br'),
+  metadataBase: new URL(SITE_URL),
   keywords: ['criptomoedas', 'bitcoin', 'ethereum', 'blockchain', 'defi', 'nft', 'mercado cripto', 'notícias crypto'],
   authors: [{ name: 'VerticeCripto' }],
   creator: 'VerticeCripto',
@@ -45,6 +46,36 @@ export const metadata: Metadata = {
   },
 }
 
+// Structured data global: Organization + WebSite (com SearchAction).
+const siteJsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': `${SITE_URL}/#organization`,
+      name: 'VerticeCripto',
+      url: SITE_URL,
+      logo: `${SITE_URL}/logo-light.png`,
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${SITE_URL}/#website`,
+      url: SITE_URL,
+      name: 'VerticeCripto',
+      inLanguage: 'pt-BR',
+      publisher: { '@id': `${SITE_URL}/#organization` },
+      potentialAction: {
+        '@type': 'SearchAction',
+        target: {
+          '@type': 'EntryPoint',
+          urlTemplate: `${SITE_URL}/busca?q={search_term_string}`,
+        },
+        'query-input': 'required name=search_term_string',
+      },
+    },
+  ],
+}
+
 export default function RootLayout({
   children,
 }: {
@@ -53,6 +84,12 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" suppressHydrationWarning>
       <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(siteJsonLd).replace(/</g, '\\u003c'),
+          }}
+        />
         {GA_ID && (
           <>
             <Script

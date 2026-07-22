@@ -43,7 +43,7 @@ export default function ShareButtons({ title, url }: ShareButtonsProps) {
     <div className="relative flex items-center gap-3 mb-8">
       {/* Toast Notification */}
       {showToast && (
-        <div className="absolute -top-12 left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg shadow-lg animate-fade-in">
+        <div role="status" className="absolute -top-12 left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg shadow-lg animate-fade-in">
           <Check className="w-4 h-4" />
           Link copiado!
         </div>

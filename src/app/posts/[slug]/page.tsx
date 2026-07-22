@@ -1,8 +1,29 @@
 import { getPosts, getPostBySlug, Post } from '@/services/api'
-import { cleanMetaDescription, removeDuplicateTitle, stripMarkdown, calculateReadingTime, formatDate, escapeJsonLd, formatTitle } from '@/lib/utils'
-import { notFound, redirect } from 'next/navigation'
+import { cleanMetaDescription, removeDuplicateTitle, stripMarkdown, calculateReadingTime, formatDate, formatTitle } from '@/lib/utils'
+import { SITE_URL } from '@/config/site'
+import { notFound } from 'next/navigation'
+import { isValidElement, type ReactNode } from 'react'
 import Image from 'next/image'
 import ReactMarkdown from 'react-markdown'
+
+/**
+ * Extrai texto puro dos children do ReactMarkdown de forma recursiva.
+ * Antes usava String(children), que virava "[object Object]" quando o heading
+ * continha nós React (ex.: **negrito** dentro do título).
+ */
+function extractText(children: ReactNode): string {
+  if (children == null || typeof children === 'boolean') return ''
+  if (typeof children === 'string' || typeof children === 'number') {
+    return String(children)
+  }
+  if (Array.isArray(children)) {
+    return children.map(extractText).join('')
+  }
+  if (isValidElement(children)) {
+    return extractText((children.props as { children?: ReactNode }).children)
+  }
+  return ''
+}
 import { Clock, Calendar, Share2, User } from 'lucide-react'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
@@ -35,22 +56,34 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       }
     }
 
-    // Aplicar formatTitle() para capitalização correta em português brasileiro
     const cleanTitle = formatTitle(stripMarkdown(post.title))
-    const cleanDescription = formatTitle(cleanMetaDescription(post.meta_description || post.excerpt))
+    // NÃO aplicar formatTitle na meta description (é texto de sentença, não título).
+    const cleanDescription = cleanMetaDescription(post.meta_description || post.excerpt)
+    const ownUrl = `${SITE_URL}/posts/${post.slug}`
+
+    // Canonical: só respeita o canonical_url do backend se ele apontar para o
+    // próprio domínio (canonical intencional). Caso contrário — vazio ou URL de
+    // fonte externa — usamos a URL própria para não desindexar nosso conteúdo.
+    const canonical =
+      post.canonical_url && post.canonical_url.startsWith(SITE_URL)
+        ? post.canonical_url
+        : ownUrl
 
     return {
       title: post.meta_title ? formatTitle(post.meta_title) : cleanTitle,
       description: cleanDescription,
       alternates: {
-        canonical: post.canonical_url || `https://verticecripto.com.br/posts/${post.slug}`,
+        canonical,
       },
       openGraph: {
         title: cleanTitle,
         description: cleanDescription,
-        url: `https://verticecripto.com.br/posts/${post.slug}`,
+        url: ownUrl,
         siteName: 'VerticeCripto',
-        images: [{ url: post.featured_image_url || '', width: 1200, height: 630 }],
+        // Omitir o campo images se não houver imagem (não emitir url vazia).
+        ...(post.featured_image_url
+          ? { images: [{ url: post.featured_image_url, width: 1200, height: 630 }] }
+          : {}),
         locale: 'pt_BR',
         type: 'article',
         publishedTime: post.published_at,
@@ -92,15 +125,18 @@ export default async function PostPage({ params }: { params: { slug: string } })
   const cleanContent = removeDuplicateTitle(post.content_markdown, post.title)
   const readingTime = calculateReadingTime(cleanContent)
 
-  // SECURITY: Escape all user-generated content for JSON-LD to prevent XSS
-  const postUrl = `https://verticecripto.com.br/posts/${post.slug}`
+  const postUrl = `${SITE_URL}/posts/${post.slug}`
   const cleanDescription = cleanMetaDescription(post.meta_description || post.excerpt)
+  const cleanTitle = formatTitle(stripMarkdown(post.title))
+
+  // JSON-LD: NÃO escapamos entidades HTML nos valores (isso corrompia o JSON).
+  // A serialização segura é feita com JSON.stringify + escape de "<" abaixo.
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'NewsArticle',
-    headline: escapeJsonLd(post.title),
-    description: escapeJsonLd(cleanDescription),
-    image: [post.featured_image_url ? escapeJsonLd(post.featured_image_url) : null].filter(Boolean),
+    headline: cleanTitle,
+    description: cleanDescription,
+    image: post.featured_image_url ? [post.featured_image_url] : [],
     datePublished: post.published_at,
     dateModified: post.updated_at,
     inLanguage: 'pt-BR',
@@ -111,26 +147,52 @@ export default async function PostPage({ params }: { params: { slug: string } })
     },
     author: {
       '@type': 'Person',
-      name: escapeJsonLd(post.author?.name) || 'Redação VerticeCripto',
+      name: post.author?.name || 'Redação VerticeCripto',
     },
     publisher: {
       '@type': 'Organization',
       name: 'VerticeCripto',
-      url: 'https://verticecripto.com.br',
+      url: SITE_URL,
       logo: {
         '@type': 'ImageObject',
-        url: 'https://verticecripto.com.br/logo-light.png',
+        url: `${SITE_URL}/logo-light.png`,
       },
     },
     ...(post.category && {
-      articleSection: escapeJsonLd(post.category.name),
+      articleSection: post.category.name,
     }),
     ...(post.tags && post.tags.length > 0 && {
-      keywords: post.tags.map((tag) => escapeJsonLd(tag.name)).join(', '),
+      keywords: post.tags.map((tag) => tag.name).join(', '),
     }),
   }
 
-  const cleanTitle = formatTitle(stripMarkdown(post.title))
+  // BreadcrumbList (espelha os breadcrumbs visuais).
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Início', item: SITE_URL },
+      ...(post.category
+        ? [
+            {
+              '@type': 'ListItem',
+              position: 2,
+              name: post.category.name,
+              item: `${SITE_URL}/categoria/${post.category.slug}`,
+            },
+          ]
+        : []),
+      {
+        '@type': 'ListItem',
+        position: post.category ? 3 : 2,
+        name: cleanTitle,
+        item: postUrl,
+      },
+    ],
+  }
+
+  const serializeJsonLd = (data: unknown) =>
+    JSON.stringify(data).replace(/</g, '\\u003c')
 
   return (
     <>
@@ -138,7 +200,11 @@ export default async function PostPage({ params }: { params: { slug: string } })
       <main id="main-content" className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: serializeJsonLd(breadcrumbJsonLd) }}
         />
 
         <article className="max-w-4xl mx-auto px-4 py-8">
@@ -185,7 +251,7 @@ export default async function PostPage({ params }: { params: { slug: string } })
 
             {/* Share Buttons */}
             <ShareButtons
-              url={`https://verticecripto.com.br/posts/${post.slug}`}
+              url={postUrl}
               title={cleanTitle}
             />
           </header>
@@ -234,10 +300,11 @@ export default async function PostPage({ params }: { params: { slug: string } })
               prose-img:rounded-lg prose-img:shadow-md">
               <ReactMarkdown
                 components={{
-                  h1: ({ children }) => <h1>{formatTitle(String(children))}</h1>,
-                  h2: ({ children }) => <h2>{formatTitle(String(children))}</h2>,
-                  h3: ({ children }) => <h3>{formatTitle(String(children))}</h3>,
-                  h4: ({ children }) => <h4>{formatTitle(String(children))}</h4>,
+                  // Rebaixa qualquer # do markdown para h2 (já existe o h1 da página).
+                  h1: ({ children }) => <h2>{formatTitle(extractText(children))}</h2>,
+                  h2: ({ children }) => <h2>{formatTitle(extractText(children))}</h2>,
+                  h3: ({ children }) => <h3>{formatTitle(extractText(children))}</h3>,
+                  h4: ({ children }) => <h4>{formatTitle(extractText(children))}</h4>,
                 }}
               >
                 {cleanContent}

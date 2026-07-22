@@ -3,8 +3,9 @@ import Footer from '@/components/layout/Footer'
 import Breadcrumbs from '@/components/ui/Breadcrumbs'
 
 export const metadata = {
-  title: 'Sobre Nós - VerticeCripto',
+  title: 'Sobre Nós',
   description: 'Conheça o VerticeCripto, seu portal de notícias sobre criptomoedas em português.',
+  alternates: { canonical: '/sobre' },
 }
 
 export default function AboutPage() {

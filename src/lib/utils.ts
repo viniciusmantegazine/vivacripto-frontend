@@ -126,106 +126,15 @@ export function sanitizeSearchQuery(query: string): string {
 }
 
 /**
- * SECURITY: Escape string for safe JSON-LD embedding
- * Prevents XSS through structured data
- */
-export function escapeJsonLd(value: string | null | undefined): string {
-  if (!value) return ''
-
-  return value
-    // Escape HTML entities
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    // Escape quotes for JSON context
-    .replace(/"/g, '&quot;')
-    // Remove script injection attempts
-    .replace(/javascript:/gi, '')
-    .replace(/on\w+=/gi, '')
-}
-
-/**
- * Nomes próprios e siglas que devem manter capitalização
- * Inclui: criptomoedas, empresas, siglas, países/estados
- */
-const PROPER_NOUNS = [
-  // Criptomoedas principais
-  'Bitcoin', 'Ethereum', 'Solana', 'Cardano', 'XRP', 'Dogecoin', 'Shiba Inu',
-  'Litecoin', 'Polkadot', 'Avalanche', 'Polygon', 'Chainlink', 'Uniswap',
-  'Aave', 'Cosmos', 'Tether', 'USDC', 'USDT', 'BNB', 'Tron', 'Stellar',
-  'Monero', 'Algorand', 'VeChain', 'Hedera', 'Filecoin', 'Aptos', 'Sui',
-  'Arbitrum', 'Optimism', 'Base', 'Fantom', 'Near', 'Internet Computer',
-  // Siglas e termos técnicos
-  'DeFi', 'NFT', 'NFTs', 'ETF', 'ETFs', 'DAO', 'DAOs', 'DEX', 'CEX',
-  'API', 'CEO', 'CFO', 'CTO', 'IPO', 'ICO', 'IDO', 'IEO', 'TVL', 'APY', 'APR',
-  'BTC', 'ETH', 'SOL', 'ADA', 'DOT', 'AVAX', 'MATIC', 'LINK', 'UNI', 'AAVE',
-  'L1', 'L2', 'Web3', 'GameFi', 'SocialFi', 'ReFi', 'CeFi', 'TradFi',
-  'PIB', 'GDP', 'CBDC', 'CBDCs', 'KYC', 'AML', 'P2P', 'DCA', 'FOMO', 'FUD', 'HODL',
-  'iShares', 'IBIT',
-  // Órgãos reguladores e instituições
-  'SEC', 'CFTC', 'FBI', 'DOJ', 'IRS', 'FED', 'BCE', 'FMI', 'CVM', 'Bacen',
-  'Senado', 'Congresso', 'Casa Branca', 'Tesouro',
-  // Empresas e exchanges
-  'Binance', 'Coinbase', 'Kraken', 'FTX', 'Gemini', 'Bitfinex', 'Bitstamp',
-  'OKX', 'Bybit', 'KuCoin', 'Huobi', 'Gate.io', 'Mercado Bitcoin',
-  'Goldman Sachs', 'JPMorgan', 'BlackRock', 'Fidelity', 'Grayscale',
-  'MicroStrategy', 'Tesla', 'PayPal', 'Visa', 'Mastercard', 'Stripe',
-  'Circle', 'Paxos', 'Ripple', 'Consensys', 'Chainalysis', 'Fireblocks',
-  'OpenSea', 'Blur', 'Magic Eden', 'Rarible', 'Foundation',
-  'MetaMask', 'Ledger', 'Trezor', 'Trust Wallet', 'Phantom',
-  'Schwab', 'Kalshi', 'NYSE', 'Nasdaq', 'CME', 'CBOE',
-  'Citizens', 'Citi', 'Citibank', 'Morgan Stanley', 'Deutsche Bank', 'HSBC',
-  'Santander', 'Itaú', 'Bradesco', 'Nubank', 'XP', 'BTG Pactual',
-  'Maple', 'CoinDesk', 'Steak n Shake', 'Backpack',
-  // Países, estados e lugares
-  'Brasil', 'EUA', 'China', 'Japão', 'Coreia', 'Rússia', 'Índia',
-  'Reino Unido', 'Alemanha', 'França', 'Suíça', 'Singapura', 'Dubai',
-  'El Salvador', 'Portugal', 'Argentina', 'México', 'Canadá', 'Austrália',
-  'Massachusetts', 'MA', 'NY', 'CA', 'TX', 'FL', 'Wyoming', 'Delaware',
-  'Estados Unidos', 'Davos', 'Hong Kong',
-  // Pessoas notáveis
-  'Satoshi Nakamoto', 'Vitalik Buterin', 'Changpeng Zhao', 'CZ',
-  'Brian Armstrong', 'Sam Bankman-Fried', 'SBF', 'Michael Saylor',
-  'Elon Musk', 'Gary Gensler', 'Jerome Powell', 'Janet Yellen',
-  'Sidney Powell', "Kevin O'Leary", 'Donald Trump', 'Joe Biden',
-  // Outros termos
-  'Ethereum Foundation', 'Bitcoin Foundation', 'Crypto Valley',
-  'Silicon Valley', 'Wall Street', 'Main Street',
-]
-
-/**
- * Formata título seguindo padrão do português brasileiro
- * - Primeira letra maiúscula
- * - Nomes próprios e siglas mantêm capitalização original
- * - Após dois pontos, primeira letra maiúscula
+ * Formata título para exibição.
+ *
+ * O backend já gera títulos com capitalização correta (nomes próprios, siglas,
+ * etc.). A implementação anterior forçava lowercase e restaurava apenas ~150
+ * nomes próprios hardcoded, o que quebrava qualquer nome novo em títulos e
+ * meta tags. Agora confiamos no texto do backend e apenas removemos espaços
+ * das bordas.
  */
 export function formatTitle(title: string): string {
   if (!title) return ''
-
-  // Converte tudo para minúscula
-  let formatted = title.toLowerCase()
-
-  // Primeira letra maiúscula
-  formatted = formatted.charAt(0).toUpperCase() + formatted.slice(1)
-
-  // Restaura maiúsculas em nomes próprios (ordenados por tamanho decrescente para evitar conflitos)
-  const sortedNouns = [...PROPER_NOUNS].sort((a, b) => b.length - a.length)
-
-  for (const noun of sortedNouns) {
-    // Usa word boundary para evitar matches parciais
-    const regex = new RegExp(`\\b${noun.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi')
-    formatted = formatted.replace(regex, noun)
-  }
-
-  // Maiúscula após dois pontos (padrão jornalístico PT-BR)
-  formatted = formatted.replace(/:\s+([a-záàâãéèêíïóôõöúç])/gi, (_match, letter) =>
-    ': ' + letter.toUpperCase()
-  )
-
-  // Maiúscula após ponto final, interrogação ou exclamação
-  formatted = formatted.replace(/([.!?])\s+([a-záàâãéèêíïóôõöúç])/gi, (_match, punct, letter) =>
-    punct + ' ' + letter.toUpperCase()
-  )
-
-  return formatted
+  return title.trim()
 }

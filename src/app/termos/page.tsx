@@ -3,8 +3,9 @@ import Footer from '@/components/layout/Footer'
 import Breadcrumbs from '@/components/ui/Breadcrumbs'
 
 export const metadata = {
-  title: 'Termos de Uso - VerticeCripto',
+  title: 'Termos de Uso',
   description: 'Termos de uso do portal VerticeCripto.',
+  alternates: { canonical: '/termos' },
 }
 
 export default function TermsPage() {

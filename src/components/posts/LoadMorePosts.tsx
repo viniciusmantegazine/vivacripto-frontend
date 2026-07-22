@@ -10,6 +10,7 @@ interface LoadMorePostsProps {
   totalPosts: number
   initialPage: number
   pageSize: number
+  category?: string
 }
 
 export default function LoadMorePosts({
@@ -17,41 +18,50 @@ export default function LoadMorePosts({
   totalPosts,
   initialPage,
   pageSize,
+  category,
 }: LoadMorePostsProps) {
   const [posts, setPosts] = useState<Post[]>(initialPosts)
   const [page, setPage] = useState(initialPage)
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(false)
   const [hasMore, setHasMore] = useState(posts.length < totalPosts)
 
   const loadMore = async () => {
     if (loading || !hasMore) return
 
     setLoading(true)
+    setError(false)
     const nextPage = page + 1
 
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/posts?page=${nextPage}&page_size=${pageSize}&status=published`
-      )
+      // Rota proxy interna (mesma origem) para evitar problemas de CORS.
+      const params = new URLSearchParams({
+        page: String(nextPage),
+        page_size: String(pageSize),
+        status: 'published',
+      })
+      if (category) params.set('category', category)
 
-      if (response.ok) {
-        const data = await response.json()
-        const newPosts = data.items || []
+      const response = await fetch(`/api/posts?${params.toString()}`)
 
-        if (newPosts.length === 0) {
-          setHasMore(false)
-        } else {
-          setPosts(prev => [...prev, ...newPosts])
-          setPage(nextPage)
-          // Verificar se ainda há mais posts
-          const totalLoaded = posts.length + newPosts.length
-          setHasMore(totalLoaded < data.total)
-        }
-      } else {
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`)
+      }
+
+      const data = await response.json()
+      const newPosts: Post[] = data.items || []
+
+      if (newPosts.length === 0) {
         setHasMore(false)
+      } else {
+        setPosts((prev) => [...prev, ...newPosts])
+        setPage(nextPage)
+        const totalLoaded = posts.length + newPosts.length
+        setHasMore(totalLoaded < (data.total ?? totalLoaded))
       }
     } catch {
-      setHasMore(false)
+      // Não esconder o botão silenciosamente: mostrar erro + permitir retry.
+      setError(true)
     } finally {
       setLoading(false)
     }
@@ -66,8 +76,23 @@ export default function LoadMorePosts({
         ))}
       </div>
 
+      {/* Mensagem de erro com retry */}
+      {error && (
+        <div className="text-center mt-12" role="alert">
+          <p className="text-gray-600 dark:text-gray-400 mb-4">
+            Erro ao carregar notícias.
+          </p>
+          <button
+            onClick={loadMore}
+            className="px-8 py-3 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg transition-colors"
+          >
+            Tentar novamente
+          </button>
+        </div>
+      )}
+
       {/* Botão Carregar Mais */}
-      {hasMore && (
+      {hasMore && !error && (
         <div className="flex justify-center mt-12">
           <button
             onClick={loadMore}
@@ -87,7 +112,7 @@ export default function LoadMorePosts({
       )}
 
       {/* Mensagem quando não há mais posts */}
-      {!hasMore && posts.length > 0 && (
+      {!hasMore && !error && posts.length > 0 && (
         <div className="text-center mt-12 text-gray-500 dark:text-gray-400">
           <p>Você viu todas as notícias disponíveis</p>
         </div>

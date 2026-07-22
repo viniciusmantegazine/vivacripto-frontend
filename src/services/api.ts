@@ -1,3 +1,5 @@
+import { cache } from 'react'
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'
 
 export interface Post {
@@ -146,48 +148,70 @@ function validatePostListResponse(data: unknown, defaultPageSize: number): PostL
   }
 }
 
-export async function getPosts(params: {
+/**
+ * Fetch a paginated list of posts.
+ *
+ * ISR: responses are cached and revalidated every 5 minutes and tagged
+ * with 'posts' so the /api/revalidate webhook can bust them on publish.
+ *
+ * A valid HTTP 200 with an empty `items` array is treated as a legitimate
+ * empty list. Network failures or non-ok HTTP responses are logged and
+ * re-thrown so Next.js does not cache a bad response (and error.tsx can act).
+ */
+export const getPosts = cache(async function getPosts(params: {
   page?: number
   pageSize?: number
   status?: string
+  category?: string
 }): Promise<PostListResponse> {
-  const { page = 1, pageSize = 10, status = 'published' } = params
+  const { page = 1, pageSize = 10, status = 'published', category } = params
 
-  const emptyResponse: PostListResponse = {
-    items: [],
-    total: 0,
-    page: 1,
-    page_size: pageSize,
-    total_pages: 0,
+  const url = new URL(`${API_URL}/posts`)
+  url.searchParams.append('page', page.toString())
+  url.searchParams.append('page_size', pageSize.toString())
+  if (status) {
+    url.searchParams.append('status', status)
+  }
+  if (category) {
+    url.searchParams.append('category', category)
   }
 
+  let res: Response
   try {
-    const url = new URL(`${API_URL}/posts`)
-    url.searchParams.append('page', page.toString())
-    url.searchParams.append('page_size', pageSize.toString())
-    if (status) {
-      url.searchParams.append('status', status)
-    }
-
-    const res = await fetch(url.toString(), {
-      cache: 'no-store',
+    res = await fetch(url.toString(), {
+      next: { revalidate: 300, tags: ['posts'] },
     })
-
-    if (!res.ok) {
-      return emptyResponse
-    }
-
-    const data = await res.json()
-
-    // SECURITY: Validate response structure
-    const validatedResponse = validatePostListResponse(data, pageSize)
-    return validatedResponse
-  } catch {
-    return emptyResponse
+  } catch (error) {
+    // Network error: log and re-throw so the bad state is not cached.
+    console.error(`[getPosts] Network error fetching ${url.toString()}:`, error)
+    throw error
   }
-}
 
-export async function getPostBySlug(slug: string): Promise<Post | null> {
+  if (!res.ok) {
+    console.error(`[getPosts] HTTP ${res.status} fetching ${url.toString()}`)
+    throw new Error(`Failed to fetch posts: HTTP ${res.status}`)
+  }
+
+  const data = await res.json()
+
+  // SECURITY: Validate response structure. An empty items array here is a
+  // legitimate "no posts" result, not an error.
+  return validatePostListResponse(data, pageSize)
+})
+
+/**
+ * Fetch a single post by slug.
+ *
+ * Wrapped in React.cache to dedupe the call within a single request
+ * (generateMetadata + the page component both call it).
+ *
+ * Returns null only for a real 404. Network errors and other non-ok
+ * responses are logged and re-thrown so callers can surface an error page
+ * instead of a misleading notFound().
+ */
+export const getPostBySlug = cache(async function getPostBySlug(
+  slug: string
+): Promise<Post | null> {
   // SECURITY: Validate slug parameter
   if (!slug || typeof slug !== 'string' || slug.length > 200) {
     return null
@@ -199,21 +223,30 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
     return null
   }
 
+  const url = `${API_URL}/posts/slug/${encodeURIComponent(sanitizedSlug)}`
+
+  let res: Response
   try {
-    const url = `${API_URL}/posts/slug/${encodeURIComponent(sanitizedSlug)}`
-    const res = await fetch(url, {
-      cache: 'no-store',
+    res = await fetch(url, {
+      next: { revalidate: 300, tags: ['posts'] },
     })
+  } catch (error) {
+    console.error(`[getPostBySlug] Network error fetching ${url}:`, error)
+    throw error
+  }
 
-    if (!res.ok) {
-      return null
-    }
-
-    const data = await res.json()
-
-    // SECURITY: Validate response structure
-    return validatePost(data)
-  } catch {
+  // A real 404 means the post does not exist -> notFound() at the page level.
+  if (res.status === 404) {
     return null
   }
-}
+
+  if (!res.ok) {
+    console.error(`[getPostBySlug] HTTP ${res.status} fetching ${url}`)
+    throw new Error(`Failed to fetch post: HTTP ${res.status}`)
+  }
+
+  const data = await res.json()
+
+  // SECURITY: Validate response structure
+  return validatePost(data)
+})

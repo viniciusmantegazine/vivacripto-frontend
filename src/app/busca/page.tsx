@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, Suspense, useCallback } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Search, Loader2 } from 'lucide-react'
 import Header from '@/components/layout/Header'
@@ -41,6 +41,7 @@ function searchPostsLocally(posts: Post[], query: string): Post[] {
 }
 
 function SearchContent() {
+  const router = useRouter()
   const searchParams = useSearchParams()
   const rawQuery = searchParams.get('q') || ''
   // SECURITY: Sanitize query from URL params
@@ -102,8 +103,9 @@ function SearchContent() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
     if (searchQuery.trim()) {
-      window.history.pushState({}, '', `/busca?q=${encodeURIComponent(searchQuery)}`)
-      performSearch(searchQuery)
+      // Apenas navega: a atualização de searchParams dispara o useEffect, que
+      // executa a busca (com AbortController). Evita a busca duplicada anterior.
+      router.push(`/busca?q=${encodeURIComponent(searchQuery)}`)
     }
   }
 
@@ -119,6 +121,7 @@ function SearchContent() {
           <input
             type="text"
             placeholder="Digite sua busca..."
+            aria-label="Buscar notícias"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full px-6 py-4 pl-14 text-lg border-2 border-gray-300 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
