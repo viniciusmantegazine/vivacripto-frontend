@@ -17,6 +17,7 @@ export interface Post {
   meta_title: string | null
   meta_description: string | null
   canonical_url: string | null
+  reading_time?: number
   author: {
     id: string
     name: string
@@ -85,6 +86,7 @@ function validatePost(data: unknown): Post | null {
     meta_title: typeof post.meta_title === 'string' ? post.meta_title : null,
     meta_description: typeof post.meta_description === 'string' ? post.meta_description : null,
     canonical_url: typeof post.canonical_url === 'string' ? post.canonical_url : null,
+    reading_time: typeof post.reading_time === 'number' ? post.reading_time : undefined,
     author: post.author && typeof post.author === 'object'
       ? {
           id: String((post.author as Record<string, unknown>).id || ''),

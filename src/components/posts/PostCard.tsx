@@ -28,7 +28,11 @@ function ImageFallback({ categorySlug }: { categorySlug?: string }) {
 }
 
 export default function PostCard({ post, variant = 'standard', priority = false }: PostCardProps) {
-  const readingTime = calculateReadingTime(post.content_markdown)
+  // Prefere o reading_time calculado no backend (listagens nao trazem o
+  // conteudo completo); cai para o calculo local quando o conteudo existe.
+  const readingTime = post.reading_time && post.reading_time > 0
+    ? post.reading_time
+    : calculateReadingTime(post.content_markdown)
   const cleanTitle = formatTitle(stripMarkdown(post.title))
   const cleanExcerpt = formatTitle(stripMarkdown(post.excerpt))
 

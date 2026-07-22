@@ -25,8 +25,14 @@ export function stripMarkdown(text: string): string {
  * Calculate reading time based on word count
  */
 export function calculateReadingTime(content: string): number {
+  // Blindagem: nas listagens o backend nao envia content_markdown (payload
+  // enxuto), entao pode chegar undefined/vazio. Sem o guard, `.split` de
+  // undefined estoura e derruba a pagina via error boundary.
+  if (typeof content !== 'string' || content.trim().length === 0) {
+    return 0
+  }
   const wordsPerMinute = 200
-  const wordCount = content.split(/\s+/).length
+  const wordCount = content.trim().split(/\s+/).length
   return Math.ceil(wordCount / wordsPerMinute)
 }
 
