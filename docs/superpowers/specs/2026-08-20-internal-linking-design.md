@@ -90,7 +90,7 @@ não landing page. `src/app/sitemap.ts` não muda.
 
 ## Parte 2 — "Leia Também" determinístico
 
-### Função nova: `getRelatedPosts(post)` (em `src/services/`)
+### Função nova: `getRelatedPosts(post)` em `src/services/related.ts`
 
 Substitui o bloco atual de `posts/[slug]/page.tsx` (linhas ~115–122).
 
