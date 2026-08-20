@@ -1,4 +1,4 @@
-import { getPosts, Post } from '@/services/api'
+import { getCategoryPosts, CATEGORY_PAGE_SIZE } from '@/services/category-posts'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Header from '@/components/layout/Header'
@@ -10,8 +10,6 @@ import { SITE_URL } from '@/config/site'
 
 // ISR: revalida a cada 5 minutos (alinhado ao cache da API).
 export const revalidate = 300
-
-const PAGE_SIZE = 12
 
 export async function generateStaticParams() {
   return CATEGORY_SLUGS.map((slug) => ({ slug }))
@@ -44,43 +42,6 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       locale: 'pt_BR',
       type: 'website',
     },
-  }
-}
-
-/**
- * Busca posts da categoria usando o filtro da API, com fallback para o método
- * antigo (buscar posts e filtrar em memória) caso o endpoint por categoria
- * não exista ou falhe.
- */
-async function getCategoryPosts(
-  slug: string
-): Promise<{ posts: Post[]; total: number; canPaginate: boolean }> {
-  try {
-    const res = await getPosts({
-      category: slug,
-      page: 1,
-      pageSize: PAGE_SIZE,
-      status: 'published',
-    })
-
-    // Se veio conteúdo e ao menos um item pertence à categoria, confiamos no
-    // filtro do backend e habilitamos paginação real via /api/posts.
-    const matches = res.items.filter((p) => p.category?.slug === slug)
-    if (res.items.length === 0 || matches.length === res.items.length) {
-      return { posts: res.items, total: res.total, canPaginate: true }
-    }
-
-    // Backend ignorou o filtro (retornou mix): cai no fallback abaixo.
-    throw new Error('category filter not applied')
-  } catch {
-    // Fallback: busca um lote maior e filtra em memória (sem paginação real).
-    try {
-      const res = await getPosts({ page: 1, pageSize: 50, status: 'published' })
-      const filtered = res.items.filter((p) => p.category?.slug === slug)
-      return { posts: filtered, total: filtered.length, canPaginate: false }
-    } catch {
-      return { posts: [], total: 0, canPaginate: false }
-    }
   }
 }
 
@@ -124,7 +85,7 @@ export default async function CategoryPage({ params }: { params: { slug: string 
                 initialPosts={posts}
                 totalPosts={canPaginate ? total : posts.length}
                 initialPage={1}
-                pageSize={PAGE_SIZE}
+                pageSize={CATEGORY_PAGE_SIZE}
                 category={params.slug}
               />
             </>
