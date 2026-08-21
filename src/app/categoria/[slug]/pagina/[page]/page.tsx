@@ -18,8 +18,9 @@ export async function generateStaticParams() {
 }
 
 // Aceita apenas inteiros >= 2 (a página 1 é /categoria/[slug]).
+// Sem zeros à esquerda: /pagina/02 seria uma URL duplicada de /pagina/2.
 function parsePage(raw: string): number | null {
-  if (!/^\d+$/.test(raw)) return null
+  if (!/^[1-9]\d*$/.test(raw)) return null
   const page = parseInt(raw, 10)
   return page >= 2 ? page : null
 }

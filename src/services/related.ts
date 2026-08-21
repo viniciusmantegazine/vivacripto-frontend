@@ -45,9 +45,10 @@ export function pickRelated(
 
 /**
  * "Leia Também" com espalhamento determinístico: o hash do slug escolhe uma
- * página do arquivo da categoria, de onde saem os 3 relacionados. O trio é
- * função pura de (slug, total_pages da categoria) — só muda quando a
- * categoria ganha ~12 posts novos. Ver spec
+ * página do arquivo da categoria, de onde saem os 3 relacionados. A escolha
+ * é determinística dentro da janela de cache do ISR (mesma entrada → mesma
+ * saída); a longo prazo o trio desliza conforme posts novos deslocam a
+ * paginação da categoria. Ver spec
  * docs/superpowers/specs/2026-08-20-internal-linking-design.md.
  *
  * Pode retornar menos de RELATED_COUNT quando a categoria tem poucos posts;
