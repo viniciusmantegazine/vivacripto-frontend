@@ -1,17 +1,16 @@
-import { getPosts, Post } from '@/services/api'
+import { getCategoryPosts } from '@/services/category-posts'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
-import LoadMorePosts from '@/components/posts/LoadMorePosts'
+import PostCard from '@/components/posts/PostCard'
+import Pagination from '@/components/ui/Pagination'
 import Breadcrumbs from '@/components/ui/Breadcrumbs'
 import { CATEGORY_SLUGS, getCategoryBySlug } from '@/config/categories'
 import { SITE_URL } from '@/config/site'
 
 // ISR: revalida a cada 5 minutos (alinhado ao cache da API).
 export const revalidate = 300
-
-const PAGE_SIZE = 12
 
 export async function generateStaticParams() {
   return CATEGORY_SLUGS.map((slug) => ({ slug }))
@@ -47,43 +46,6 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 }
 
-/**
- * Busca posts da categoria usando o filtro da API, com fallback para o método
- * antigo (buscar posts e filtrar em memória) caso o endpoint por categoria
- * não exista ou falhe.
- */
-async function getCategoryPosts(
-  slug: string
-): Promise<{ posts: Post[]; total: number; canPaginate: boolean }> {
-  try {
-    const res = await getPosts({
-      category: slug,
-      page: 1,
-      pageSize: PAGE_SIZE,
-      status: 'published',
-    })
-
-    // Se veio conteúdo e ao menos um item pertence à categoria, confiamos no
-    // filtro do backend e habilitamos paginação real via /api/posts.
-    const matches = res.items.filter((p) => p.category?.slug === slug)
-    if (res.items.length === 0 || matches.length === res.items.length) {
-      return { posts: res.items, total: res.total, canPaginate: true }
-    }
-
-    // Backend ignorou o filtro (retornou mix): cai no fallback abaixo.
-    throw new Error('category filter not applied')
-  } catch {
-    // Fallback: busca um lote maior e filtra em memória (sem paginação real).
-    try {
-      const res = await getPosts({ page: 1, pageSize: 50, status: 'published' })
-      const filtered = res.items.filter((p) => p.category?.slug === slug)
-      return { posts: filtered, total: filtered.length, canPaginate: false }
-    } catch {
-      return { posts: [], total: 0, canPaginate: false }
-    }
-  }
-}
-
 export default async function CategoryPage({ params }: { params: { slug: string } }) {
   const category = getCategoryBySlug(params.slug)
 
@@ -91,7 +53,7 @@ export default async function CategoryPage({ params }: { params: { slug: string 
     notFound()
   }
 
-  const { posts, total, canPaginate } = await getCategoryPosts(params.slug)
+  const { posts, total, totalPages, canPaginate } = await getCategoryPosts(params.slug)
 
   const breadcrumbItems = [{ label: category.name }]
 
@@ -120,13 +82,18 @@ export default async function CategoryPage({ params }: { params: { slug: string 
                 <strong>{total}</strong>{' '}
                 {total === 1 ? 'notícia encontrada' : 'notícias encontradas'}
               </p>
-              <LoadMorePosts
-                initialPosts={posts}
-                totalPosts={canPaginate ? total : posts.length}
-                initialPage={1}
-                pageSize={PAGE_SIZE}
-                category={params.slug}
-              />
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                {posts.map((post) => (
+                  <PostCard key={post.id} post={post} />
+                ))}
+              </div>
+              {canPaginate && (
+                <Pagination
+                  basePath={`/categoria/${params.slug}`}
+                  currentPage={1}
+                  totalPages={totalPages}
+                />
+              )}
             </>
           ) : (
             <div className="text-center py-20">

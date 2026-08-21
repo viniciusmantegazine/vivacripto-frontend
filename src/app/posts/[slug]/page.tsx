@@ -1,4 +1,5 @@
-import { getPosts, getPostBySlug, Post } from '@/services/api'
+import { getPosts, getPostBySlug } from '@/services/api'
+import { getRelatedPosts } from '@/services/related'
 import { cleanMetaDescription, removeDuplicateTitle, stripMarkdown, calculateReadingTime, formatDate, formatTitle } from '@/lib/utils'
 import { SITE_URL } from '@/config/site'
 import { notFound } from 'next/navigation'
@@ -112,14 +113,8 @@ export default async function PostPage({ params }: { params: { slug: string } })
     notFound()
   }
 
-  // Fetch related posts
-  let relatedPosts: Post[] = []
-  try {
-    const { items: allPosts } = await getPosts({ page: 1, pageSize: 10, status: 'published' })
-    relatedPosts = allPosts.filter((p) => p.id !== post.id).slice(0, 3)
-  } catch {
-    // Silently fail - related posts are not critical
-  }
+  // "Leia Também": mesma categoria, trio determinístico (ver services/related).
+  const relatedPosts = await getRelatedPosts(post)
 
   // Remove duplicate title from content
   const cleanContent = removeDuplicateTitle(post.content_markdown, post.title)
