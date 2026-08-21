@@ -1,7 +1,7 @@
 import { getPosts, Post } from '@/services/api'
+import { CATEGORY_PAGE_SIZE } from '@/services/category-posts'
 
 export const RELATED_COUNT = 3
-const FETCH_PAGE_SIZE = 12
 
 /**
  * Hash determinístico de string (variante djb2/xor). Sempre >= 0 e estável
@@ -12,7 +12,14 @@ export function hashSlug(slug: string): number {
   for (let i = 0; i < slug.length; i++) {
     hash = (Math.imul(hash, 33) ^ slug.charCodeAt(i)) >>> 0
   }
-  return hash
+  // fmix32 (Murmur3): espalha os bits para que slugs quase idênticos não
+  // caiam nas mesmas páginas do arquivo após o módulo.
+  hash ^= hash >>> 16
+  hash = Math.imul(hash, 2246822507) >>> 0
+  hash ^= hash >>> 13
+  hash = Math.imul(hash, 3266489909) >>> 0
+  hash ^= hash >>> 16
+  return hash >>> 0
 }
 
 /**
@@ -42,6 +49,9 @@ export function pickRelated(
  * função pura de (slug, total_pages da categoria) — só muda quando a
  * categoria ganha ~12 posts novos. Ver spec
  * docs/superpowers/specs/2026-08-20-internal-linking-design.md.
+ *
+ * Pode retornar menos de RELATED_COUNT quando a categoria tem poucos posts;
+ * chamadores devem tolerar arrays curtos.
  */
 export async function getRelatedPosts(post: Post): Promise<Post[]> {
   try {
@@ -59,11 +69,12 @@ export async function getRelatedPosts(post: Post): Promise<Post[]> {
     const seed = hashSlug(post.slug)
 
     // Página 1 também fornece total_pages; compartilha o cache ISR com a
-    // página da categoria (mesmos parâmetros de getPosts).
+    // página da categoria (mesmos parâmetros de getPosts). Determinismo
+    // assume que a ordenação padrão /posts do backend é estável entre requisições.
     const first = await getPosts({
       category,
       page: 1,
-      pageSize: FETCH_PAGE_SIZE,
+      pageSize: CATEGORY_PAGE_SIZE,
       status: 'published',
     })
     const totalPages = Math.max(first.total_pages, 1)
@@ -75,11 +86,14 @@ export async function getRelatedPosts(post: Post): Promise<Post[]> {
         : await getPosts({
             category,
             page: targetPage,
-            pageSize: FETCH_PAGE_SIZE,
+            pageSize: CATEGORY_PAGE_SIZE,
             status: 'published',
           })
 
-    const related = pickRelated(pool.items, post.id, seed)
+    // Offset independente da escolha de página (evita correlação entre os
+    // dois módulos quando totalPages divide candidates.length).
+    const offsetSeed = Math.imul(seed, 2654435761) >>> 0
+    const related = pickRelated(pool.items, post.id, offsetSeed)
 
     // Página sorteada curta (fim do arquivo/categoria pequena): completa
     // com os mais recentes da categoria, sem duplicar.
