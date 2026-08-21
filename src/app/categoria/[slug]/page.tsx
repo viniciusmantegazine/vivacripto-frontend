@@ -1,9 +1,10 @@
-import { getCategoryPosts, CATEGORY_PAGE_SIZE } from '@/services/category-posts'
+import { getCategoryPosts } from '@/services/category-posts'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
-import LoadMorePosts from '@/components/posts/LoadMorePosts'
+import PostCard from '@/components/posts/PostCard'
+import Pagination from '@/components/ui/Pagination'
 import Breadcrumbs from '@/components/ui/Breadcrumbs'
 import { CATEGORY_SLUGS, getCategoryBySlug } from '@/config/categories'
 import { SITE_URL } from '@/config/site'
@@ -52,7 +53,7 @@ export default async function CategoryPage({ params }: { params: { slug: string 
     notFound()
   }
 
-  const { posts, total, canPaginate } = await getCategoryPosts(params.slug)
+  const { posts, total, totalPages, canPaginate } = await getCategoryPosts(params.slug)
 
   const breadcrumbItems = [{ label: category.name }]
 
@@ -81,13 +82,18 @@ export default async function CategoryPage({ params }: { params: { slug: string 
                 <strong>{total}</strong>{' '}
                 {total === 1 ? 'notícia encontrada' : 'notícias encontradas'}
               </p>
-              <LoadMorePosts
-                initialPosts={posts}
-                totalPosts={canPaginate ? total : posts.length}
-                initialPage={1}
-                pageSize={CATEGORY_PAGE_SIZE}
-                category={params.slug}
-              />
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                {posts.map((post) => (
+                  <PostCard key={post.id} post={post} />
+                ))}
+              </div>
+              {canPaginate && (
+                <Pagination
+                  basePath={`/categoria/${params.slug}`}
+                  currentPage={1}
+                  totalPages={totalPages}
+                />
+              )}
             </>
           ) : (
             <div className="text-center py-20">
