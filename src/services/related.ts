@@ -1,5 +1,5 @@
 import { getPosts, Post } from '@/services/api'
-import { CATEGORY_PAGE_SIZE } from '@/services/category-posts'
+import { getCategoryPosts } from '@/services/category-posts'
 
 export const RELATED_COUNT = 3
 
@@ -69,37 +69,26 @@ export async function getRelatedPosts(post: Post): Promise<Post[]> {
     const category = post.category.slug
     const seed = hashSlug(post.slug)
 
-    // Página 1 também fornece total_pages; compartilha o cache ISR com a
-    // página da categoria (mesmos parâmetros de getPosts). Determinismo
-    // assume que a ordenação padrão /posts do backend é estável entre requisições.
-    const first = await getPosts({
-      category,
-      page: 1,
-      pageSize: CATEGORY_PAGE_SIZE,
-      status: 'published',
-    })
-    const totalPages = Math.max(first.total_pages, 1)
+    // getCategoryPosts compartilha o cache ISR com a página da categoria
+    // (mesmos parâmetros de getPosts por baixo) e traz de graça a guarda
+    // contra backend que ignora o filtro de categoria. Determinismo assume
+    // que a ordenação padrão /posts do backend é estável entre requisições.
+    const first = await getCategoryPosts(category, 1)
+    const totalPages = Math.max(first.totalPages, 1)
     const targetPage = (seed % totalPages) + 1
 
     const pool =
-      targetPage === 1
-        ? first
-        : await getPosts({
-            category,
-            page: targetPage,
-            pageSize: CATEGORY_PAGE_SIZE,
-            status: 'published',
-          })
+      targetPage === 1 ? first : await getCategoryPosts(category, targetPage)
 
     // Offset independente da escolha de página (evita correlação entre os
     // dois módulos quando totalPages divide candidates.length).
     const offsetSeed = Math.imul(seed, 2654435761) >>> 0
-    const related = pickRelated(pool.items, post.id, offsetSeed)
+    const related = pickRelated(pool.posts, post.id, offsetSeed)
 
     // Página sorteada curta (fim do arquivo/categoria pequena): completa
     // com os mais recentes da categoria, sem duplicar.
     if (related.length < RELATED_COUNT) {
-      for (const p of first.items) {
+      for (const p of first.posts) {
         if (related.length >= RELATED_COUNT) break
         if (p.id !== post.id && !related.some((r) => r.id === p.id)) {
           related.push(p)

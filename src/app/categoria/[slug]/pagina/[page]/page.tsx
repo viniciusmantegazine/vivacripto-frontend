@@ -19,10 +19,16 @@ export async function generateStaticParams() {
 
 // Aceita apenas inteiros >= 2 (a página 1 é /categoria/[slug]).
 // Sem zeros à esquerda: /pagina/02 seria uma URL duplicada de /pagina/2.
+// Máx. 4 dígitos: limita renders/entradas de cache geradas por URLs de lixo.
 function parsePage(raw: string): number | null {
-  if (!/^[1-9]\d*$/.test(raw)) return null
+  if (raw.length > 4 || !/^[1-9]\d*$/.test(raw)) return null
   const page = parseInt(raw, 10)
   return page >= 2 ? page : null
+}
+
+const NOT_FOUND_METADATA = {
+  title: 'Página não encontrada',
+  description: 'A página que você procura não existe.',
 }
 
 export async function generateMetadata({
@@ -34,10 +40,18 @@ export async function generateMetadata({
   const page = parsePage(params.page)
 
   if (!category || !page) {
-    return {
-      title: 'Página não encontrada',
-      description: 'A página que você procura não existe.',
-    }
+    return NOT_FOUND_METADATA
+  }
+
+  // Página além do fim do arquivo renderiza not-found com HTTP 200 (streaming
+  // do loading.tsx raiz); sem esta checagem o head traria título/canonical
+  // válidos num soft-404. O fetch é deduplicado com o do componente da página.
+  const { posts, totalPages, canPaginate } = await getCategoryPosts(
+    params.slug,
+    page
+  )
+  if (!canPaginate || posts.length === 0 || page > totalPages) {
+    return NOT_FOUND_METADATA
   }
 
   const url = `${SITE_URL}/categoria/${category.slug}/pagina/${page}`
