@@ -41,7 +41,7 @@
 - Modify: `package.json` (bloco `scripts`)
 - Modify: `tsconfig.json` (`exclude`)
 
-- [ ] **Step 1: Adicionar o script `test`**
+- [x] **Step 1: Adicionar o script `test`**
 
 Em `package.json`, o bloco `scripts` fica:
 
@@ -55,7 +55,7 @@ Em `package.json`, o bloco `scripts` fica:
   },
 ```
 
-- [ ] **Step 2: Excluir os testes do typecheck do build**
+- [x] **Step 2: Excluir os testes do typecheck do build**
 
 Os testes importam com extensão `.ts` (exigência do ESM no Node), o que o `tsc` do `next build` rejeitaria. Em `tsconfig.json`:
 
@@ -63,12 +63,12 @@ Os testes importam com extensão `.ts` (exigência do ESM no Node), o que o `tsc
   "exclude": ["node_modules", "src/**/__tests__/**"]
 ```
 
-- [ ] **Step 3: Rodar sem testes e confirmar que o runner sobe**
+- [x] **Step 3: Rodar sem testes e confirmar que o runner sobe**
 
 Run: `mkdir -p src/lib/__tests__ && npm test`
 Expected: saída do runner com `# tests 0` e `# pass 0` (ou aviso de nenhum arquivo encontrado), exit code 0 ou 1 sem erro de sintaxe. A pasta vazia não é commitada.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add package.json tsconfig.json
@@ -85,7 +85,7 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 - Create: `src/config/tickerCoins.ts`
 - Test: `src/lib/__tests__/tickerCoins.test.ts`
 
-- [ ] **Step 1: Escrever o teste**
+- [x] **Step 1: Escrever o teste**
 
 `src/lib/__tests__/tickerCoins.test.ts`:
 
@@ -114,12 +114,12 @@ test('imagem e url em https nos hosts esperados', () => {
 })
 ```
 
-- [ ] **Step 2: Rodar e ver falhar**
+- [x] **Step 2: Rodar e ver falhar**
 
 Run: `npm test`
 Expected: FAIL, `Cannot find module '.../src/config/tickerCoins.ts'`.
 
-- [ ] **Step 3: Criar o config**
+- [x] **Step 3: Criar o config**
 
 `src/config/tickerCoins.ts`:
 
@@ -164,12 +164,12 @@ export const TICKER_COINS: readonly TickerCoin[] = [
 ]
 ```
 
-- [ ] **Step 4: Rodar e ver passar**
+- [x] **Step 4: Rodar e ver passar**
 
 Run: `npm test`
 Expected: `# pass 3`, `# fail 0`.
 
-- [ ] **Step 5: Conferir que os 10 ícones respondem 200**
+- [x] **Step 5: Conferir que os 10 ícones respondem 200**
 
 ```bash
 node --experimental-strip-types -e "
@@ -182,7 +182,7 @@ import('./src/config/tickerCoins.ts').then(async ({ TICKER_COINS }) => {
 ```
 Expected: dez linhas começando com `200`.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/config/tickerCoins.ts src/lib/__tests__/tickerCoins.test.ts
@@ -201,7 +201,7 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 
 Este arquivo não pode importar nada do projeto além de tipos (o Node não resolve `@/`). Tipos são apagados pelo `--experimental-strip-types`.
 
-- [ ] **Step 1: Escrever os testes**
+- [x] **Step 1: Escrever os testes**
 
 `src/lib/__tests__/market.test.ts`:
 
@@ -292,12 +292,12 @@ describe('formatadores pt-BR', () => {
 })
 ```
 
-- [ ] **Step 2: Rodar e ver falhar**
+- [x] **Step 2: Rodar e ver falhar**
 
 Run: `npm test`
 Expected: FAIL em `market.test.ts`, `Cannot find module '.../src/lib/market.ts'`. Os 3 testes de `tickerCoins` seguem passando.
 
-- [ ] **Step 3: Implementar**
+- [x] **Step 3: Implementar**
 
 `src/lib/market.ts`:
 
@@ -410,12 +410,12 @@ export function formatChange(value: number): string {
 }
 ```
 
-- [ ] **Step 4: Rodar e ver passar**
+- [x] **Step 4: Rodar e ver passar**
 
 Run: `npm test`
 Expected: `# pass 12`, `# fail 0`.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/lib/market.ts src/lib/__tests__/market.test.ts
@@ -434,7 +434,7 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 
 Sem teste unitário (é I/O). Verificação manual no Step 3.
 
-- [ ] **Step 1: Criar `getMarketData`**
+- [x] **Step 1: Criar `getMarketData`**
 
 `src/lib/getMarketData.ts`:
 
@@ -477,7 +477,7 @@ export async function getMarketData(): Promise<MarketCoin[]> {
 }
 ```
 
-- [ ] **Step 2: Criar a rota**
+- [x] **Step 2: Criar a rota**
 
 `src/app/api/market/route.ts`:
 
@@ -516,7 +516,7 @@ export async function GET() {
 }
 ```
 
-- [ ] **Step 3: Verificar no dev server**
+- [x] **Step 3: Verificar no dev server**
 
 ```bash
 npx next dev -p 3006 > /tmp/ticker-dev.log 2>&1 &
@@ -527,7 +527,7 @@ kill %1
 ```
 Expected: `10 ['BTC', 'ETH', 'SOL', 'BNB', 'XRP', 'ADA', 'DOGE', 'AVAX', 'LINK', 'DOT'] <número>` e `cache-control: public, s-maxage=60, stale-while-revalidate=300`.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add src/lib/getMarketData.ts src/app/api/market/route.ts
@@ -545,7 +545,7 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 - Create: `src/components/market/MarketTickerClient.tsx`
 - Modify: `src/styles/globals.css` (acrescentar no fim)
 
-- [ ] **Step 1: CSS do marquee**
+- [x] **Step 1: CSS do marquee**
 
 Acrescentar ao final de `src/styles/globals.css`:
 
@@ -587,7 +587,7 @@ Acrescentar ao final de `src/styles/globals.css`:
 }
 ```
 
-- [ ] **Step 2: Componente de cliente**
+- [x] **Step 2: Componente de cliente**
 
 `src/components/market/MarketTickerClient.tsx`:
 
@@ -789,7 +789,7 @@ function minutesAgo(updatedAt: number): string {
 }
 ```
 
-- [ ] **Step 3: Componente de servidor**
+- [x] **Step 3: Componente de servidor**
 
 `src/components/market/MarketTicker.tsx`:
 
@@ -813,12 +813,12 @@ export default async function MarketTicker() {
 }
 ```
 
-- [ ] **Step 4: Typecheck**
+- [x] **Step 4: Typecheck**
 
 Run: `npx tsc --noEmit -p tsconfig.json`
 Expected: sem erros. (Se reclamar de `overflow-x-clip` não existe: é classe Tailwind, não TS. Se reclamar de `next` em `RequestInit`, o `next-env.d.ts` não está incluído; rodar `npx next build` no lugar.)
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/components/market/MarketTicker.tsx src/components/market/MarketTickerClient.tsx src/styles/globals.css
@@ -836,7 +836,7 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 - Modify (remover `<Header />`, `<Footer />` e seus imports): `src/app/page.tsx`, `src/app/loading.tsx`, `src/app/not-found.tsx`, `src/app/busca/page.tsx`, `src/app/contato/page.tsx`, `src/app/sobre/page.tsx`, `src/app/termos/page.tsx`, `src/app/privacidade/page.tsx`, `src/app/posts/[slug]/page.tsx`, `src/app/categoria/[slug]/page.tsx`, `src/app/categoria/[slug]/pagina/[page]/page.tsx`
 - Delete: `src/components/crypto/Top5Crypto.tsx`
 
-- [ ] **Step 1: Layout**
+- [x] **Step 1: Layout**
 
 Em `src/app/layout.tsx`, acrescentar aos imports:
 
@@ -857,7 +857,7 @@ e trocar o conteúdo do `ThemeProvider`:
         </ThemeProvider>
 ```
 
-- [ ] **Step 2: Remover Header/Footer das 11 páginas**
+- [x] **Step 2: Remover Header/Footer das 11 páginas**
 
 Em cada arquivo listado: apagar as duas linhas `import Header from '@/components/layout/Header'` e `import Footer from '@/components/layout/Footer'`, apagar `<Header />` e `<Footer />` (e a linha em branco que os acompanha). Onde o retorno era `<> <Header /> <main>…</main> <Footer /> </>`, o fragmento pode ficar ou sair; se sair, `<main>` passa a ser a raiz do retorno.
 
@@ -868,7 +868,7 @@ grep -rn "Header\|Footer" src/app --include='*.tsx' | grep -v "src/app/layout.ts
 ```
 Expected: nenhuma linha.
 
-- [ ] **Step 3: Remover o Top5Crypto**
+- [x] **Step 3: Remover o Top5Crypto**
 
 Em `src/app/page.tsx`: apagar `import Top5Crypto from '@/components/crypto/Top5Crypto'` e o bloco
 
@@ -887,12 +887,12 @@ grep -rn "Top5Crypto" src
 ```
 Expected: `grep` sem resultado.
 
-- [ ] **Step 4: Build de produção**
+- [x] **Step 4: Build de produção**
 
 Run: `npm run build 2>&1 | tail -30`
 Expected: build conclui, tabela de rotas inclui `ƒ /api/market` (ou `○` com revalidate) e nenhuma linha de erro/warning de tipo. Avisos de "Falha ao buscar posts" são esperados sem backend no ar e não impedem o build.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add -A src/app src/components
@@ -910,7 +910,7 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 
 **Files:** nenhum novo. Usa o mock de posts em `/private/tmp/claude-502/-Users-viniciusmantegazine-git-vivacripto-backend/0e626241-6b60-4eff-ab1f-12b89a1c1582/scratchpad/mock_backend.py` (porta 8017), criado no fix das capas. Se não existir mais, o build ainda funciona: a home renderiza vazia e o ticker continua verificável em `/sobre`.
 
-- [ ] **Step 1: Build contra o mock e servir**
+- [x] **Step 1: Build contra o mock e servir**
 
 ```bash
 S=/private/tmp/claude-502/-Users-viniciusmantegazine-git-vivacripto-backend/0e626241-6b60-4eff-ab1f-12b89a1c1582/scratchpad
@@ -920,7 +920,7 @@ NEXT_PUBLIC_API_URL=http://127.0.0.1:8017/api/v1 npx next start -p 3005 > $S/nex
 for i in $(seq 1 30); do curl -s -o /dev/null http://127.0.0.1:3005/ && break; sleep 1; done
 ```
 
-- [ ] **Step 2: Inspecionar home, post, 404 e sobre**
+- [x] **Step 2: Inspecionar home, post, 404 e sobre**
 
 ```bash
 for p in / /sobre /posts/nao-existe-xyz "$(curl -s http://127.0.0.1:3005/ | grep -oE 'href="/posts/[^"]+"' | head -1 | sed 's/href=//;s/"//g')"; do
@@ -928,9 +928,11 @@ for p in / /sobre /posts/nao-existe-xyz "$(curl -s http://127.0.0.1:3005/ | grep
   echo "$p  headers=$(echo "$html" | grep -o '<header' | wc -l | tr -d ' ')  footers=$(echo "$html" | grep -o '<footer' | wc -l | tr -d ' ')  ticker=$(echo "$html" | grep -c 'aria-label="Cotações do mercado"')  moedas=$(echo "$html" | grep -o 'ticker-tip-a-' | wc -l | tr -d ' ')  next_image=$(echo "$html" | grep -c '/_next/image')  top5=$(echo "$html" | grep -c 'Top 5')"
 done
 ```
-Expected, em cada linha: `headers=1 footers=1 ticker=1 moedas=10 next_image=0 top5=0`. Na 404 também.
+Expected, em cada linha: `headers=1 footers=1 ticker=1 moedas=20 next_image=0 top5=0`. Na 404 também.
 
-- [ ] **Step 3: Conferir a rota e o cache compartilhado**
+Nota da execução: `moedas` conta o id do tooltip em dois atributos (`id` e `aria-describedby`), por isso 20 para 10 moedas. Na página de post `headers=2` porque o artigo tem um `<header>` semântico próprio.
+
+- [x] **Step 3: Conferir a rota e o cache compartilhado**
 
 ```bash
 curl -s -D - http://127.0.0.1:3005/api/market -o $S/m1.json | grep -i "cache-control\|HTTP/"
@@ -940,7 +942,7 @@ python3 -c "import json;a=json.load(open('$S/m1.json'));b=json.load(open('$S/m2.
 ```
 Expected: `HTTP/1.1 200`, `cache-control: public, s-maxage=60, stale-while-revalidate=300`, `coins: 10 mesmo updatedAt em 2 chamadas seguidas: True`.
 
-- [ ] **Step 4: Encerrar e registrar**
+- [x] **Step 4: Encerrar e registrar**
 
 ```bash
 kill %1 %2 2>/dev/null; wait 2>/dev/null
