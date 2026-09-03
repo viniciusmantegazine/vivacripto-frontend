@@ -441,3 +441,39 @@
 .stagger-animation > *:nth-child(7) { animation-delay: 300ms; }
 .stagger-animation > *:nth-child(8) { animation-delay: 350ms; }
 .stagger-animation > *:nth-child(9) { animation-delay: 400ms; }
+
+/* ---------------------------------------------------------------------------
+   Ticker de mercado (src/components/market/MarketTickerClient.tsx)
+   A trilha contém a lista duas vezes; deslocar -50% e recomeçar dá um loop
+   contínuo sem emenda. Duração é definida inline (6 s por moeda).
+   --------------------------------------------------------------------------- */
+@keyframes ticker-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.ticker-track {
+  animation-name: ticker-scroll;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+
+.ticker-viewport:hover .ticker-track,
+.ticker-viewport:focus-within .ticker-track {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track {
+    animation: none;
+  }
+  /* Sem animação a faixa vira rolagem manual e a cópia duplicada é dispensável. */
+  .ticker-viewport {
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+  .ticker-track > [aria-hidden='true'] {
+    display: none;
+  }
+}
