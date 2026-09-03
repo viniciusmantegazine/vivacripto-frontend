@@ -1,8 +1,6 @@
 import { getCategoryPosts } from '@/services/category-posts'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
-import Header from '@/components/layout/Header'
-import Footer from '@/components/layout/Footer'
 import PostCard from '@/components/posts/PostCard'
 import Pagination from '@/components/ui/Pagination'
 import Breadcrumbs from '@/components/ui/Breadcrumbs'
@@ -59,8 +57,6 @@ export default async function CategoryPage({ params }: { params: { slug: string 
 
   return (
     <>
-      <Header />
-
       <main id="main-content" className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <div className="container mx-auto px-4 py-8">
           <Breadcrumbs items={breadcrumbItems} />
@@ -121,8 +117,6 @@ export default async function CategoryPage({ params }: { params: { slug: string 
           )}
         </div>
       </main>
-
-      <Footer />
     </>
   )
 }

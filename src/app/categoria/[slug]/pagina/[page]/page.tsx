@@ -1,6 +1,4 @@
 import { notFound } from 'next/navigation'
-import Header from '@/components/layout/Header'
-import Footer from '@/components/layout/Footer'
 import Breadcrumbs from '@/components/ui/Breadcrumbs'
 import PostCard from '@/components/posts/PostCard'
 import Pagination from '@/components/ui/Pagination'
@@ -97,7 +95,6 @@ export default async function CategoryPaginatedPage({
 
   return (
     <>
-      <Header />
       <main id="main-content" className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <div className="container mx-auto px-4 py-8">
           <Breadcrumbs
@@ -132,7 +129,6 @@ export default async function CategoryPaginatedPage({
           />
         </div>
       </main>
-      <Footer />
     </>
   )
 }

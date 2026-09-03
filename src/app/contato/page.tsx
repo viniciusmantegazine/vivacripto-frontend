@@ -1,5 +1,3 @@
-import Header from '@/components/layout/Header'
-import Footer from '@/components/layout/Footer'
 import Breadcrumbs from '@/components/ui/Breadcrumbs'
 import { Mail, MessageSquare } from 'lucide-react'
 
@@ -12,8 +10,6 @@ export const metadata = {
 export default function ContactPage() {
   return (
     <>
-      <Header />
-      
       <main className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <div className="container mx-auto px-4 py-8 max-w-4xl">
           <Breadcrumbs items={[{ label: 'Contato' }]} />
@@ -110,8 +106,6 @@ export default function ContactPage() {
           </article>
         </div>
       </main>
-
-      <Footer />
     </>
   )
 }

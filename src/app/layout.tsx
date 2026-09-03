@@ -2,6 +2,9 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import Script from 'next/script'
 import { ThemeProvider } from '@/components/providers/ThemeProvider'
+import Header from '@/components/layout/Header'
+import Footer from '@/components/layout/Footer'
+import MarketTicker from '@/components/market/MarketTicker'
 import { SITE_URL } from '@/config/site'
 import '../styles/globals.css'
 
@@ -116,7 +119,10 @@ export default function RootLayout({
           Pular para o conteúdo principal
         </a>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <Header />
+          <MarketTicker />
           {children}
+          <Footer />
         </ThemeProvider>
       </body>
     </html>

@@ -1,6 +1,4 @@
 import Link from 'next/link'
-import Header from '@/components/layout/Header'
-import Footer from '@/components/layout/Footer'
 
 export const metadata = {
   title: 'Página não encontrada',
@@ -10,8 +8,6 @@ export const metadata = {
 export default function NotFound() {
   return (
     <>
-      <Header />
-
       <main
         id="main-content"
         className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center px-4"
@@ -35,8 +31,6 @@ export default function NotFound() {
           </Link>
         </div>
       </main>
-
-      <Footer />
     </>
   )
 }

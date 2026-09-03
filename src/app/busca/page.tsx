@@ -4,8 +4,6 @@ import { useState, useEffect, Suspense, useCallback } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Search, Loader2 } from 'lucide-react'
-import Header from '@/components/layout/Header'
-import Footer from '@/components/layout/Footer'
 import PostCard from '@/components/posts/PostCard'
 import { Post } from '@/services/api'
 import { sanitizeSearchQuery } from '@/lib/utils'
@@ -213,8 +211,6 @@ function SearchContent() {
 export default function SearchPage() {
   return (
     <>
-      <Header />
-      
       <main id="main-content" className="min-h-screen bg-gray-50 dark:bg-gray-900" role="main">
         <Suspense fallback={
           <div className="container mx-auto px-4 py-8">
@@ -226,8 +222,6 @@ export default function SearchPage() {
           <SearchContent />
         </Suspense>
       </main>
-
-      <Footer />
     </>
   )
 }

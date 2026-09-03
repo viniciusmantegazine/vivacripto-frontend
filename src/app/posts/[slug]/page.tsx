@@ -26,8 +26,6 @@ function extractText(children: ReactNode): string {
   return ''
 }
 import { Clock, Calendar, Share2, User } from 'lucide-react'
-import Header from '@/components/layout/Header'
-import Footer from '@/components/layout/Footer'
 import Breadcrumbs from '@/components/ui/Breadcrumbs'
 import RelatedPosts from '@/components/posts/RelatedPosts'
 import ShareButtons from '@/components/ui/ShareButtons'
@@ -191,7 +189,6 @@ export default async function PostPage({ params }: { params: { slug: string } })
 
   return (
     <>
-      <Header />
       <main id="main-content" className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <script
           type="application/ld+json"
@@ -320,7 +317,6 @@ export default async function PostPage({ params }: { params: { slug: string } })
           {relatedPosts.length > 0 && <RelatedPosts posts={relatedPosts} />}
         </article>
       </main>
-      <Footer />
     </>
   )
 }

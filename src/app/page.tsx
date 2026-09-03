@@ -1,8 +1,5 @@
 import { getPosts } from '@/services/api'
 import HeroSection from '@/components/posts/HeroSection'
-import Header from '@/components/layout/Header'
-import Footer from '@/components/layout/Footer'
-import Top5Crypto from '@/components/crypto/Top5Crypto'
 import LoadMorePosts from '@/components/posts/LoadMorePosts'
 import type { Metadata } from 'next'
 
@@ -44,8 +41,6 @@ export default async function Home() {
 
   return (
     <>
-      <Header />
-
       <main id="main-content" className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <div className="container mx-auto px-4 py-8">
           {posts.length === 0 ? (
@@ -64,9 +59,6 @@ export default async function Home() {
             </div>
           ) : (
             <>
-              {/* Top 5 Cryptos */}
-              <Top5Crypto />
-
               {/* Hero Section: Principal (2/3) + Secundários (1/3) */}
               {heroMainPost && (
                 <HeroSection
@@ -96,8 +88,6 @@ export default async function Home() {
           )}
         </div>
       </main>
-
-      <Footer />
     </>
   )
 }

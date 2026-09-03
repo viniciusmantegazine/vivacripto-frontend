@@ -1,5 +1,3 @@
-import Header from '@/components/layout/Header'
-import Footer from '@/components/layout/Footer'
 import Breadcrumbs from '@/components/ui/Breadcrumbs'
 
 export const metadata = {
@@ -11,8 +9,6 @@ export const metadata = {
 export default function AboutPage() {
   return (
     <>
-      <Header />
-      
       <main className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <div className="container mx-auto px-4 py-8 max-w-4xl">
           <Breadcrumbs items={[{ label: 'Sobre Nós' }]} />
@@ -73,8 +69,6 @@ export default function AboutPage() {
           </article>
         </div>
       </main>
-
-      <Footer />
     </>
   )
 }
